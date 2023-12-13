@@ -37,13 +37,7 @@ public class Server implements Runnable {
         }
     }
 
-    public void broadcast(String message) {
-        for(ClientHandler client : this.clients) {
-            client.sendMessage(message);
-        }
-    }
-
-    public void handleMessage(String message, ClientHandler clientHandler){
+    public void broadcast(String message, ClientHandler clientHandler){
         for (ClientHandler client : this.clients) {
             client.sendMessage(clientHandler.getName() + ">" + message);
         }
@@ -55,6 +49,42 @@ public class Server implements Runnable {
                 client.sendMessage(clientHandler.getName() + "->You>" + message);
             }
         }
+    }
+
+    public void sendToAbonnes(String message, ClientHandler clientHandler) {
+        for (ClientHandler client : this.abonnes.get(clientHandler)) {
+            client.sendMessage(clientHandler.getName() + ">" + message);
+        }
+    }
+
+    public void addAbonne(String nomClient, ClientHandler clientHandler) {
+        for (ClientHandler client : this.clients) {
+            if (client.getName().equals(nomClient)) {
+                this.abonnes.get(client).add(clientHandler);
+            }
+        }
+    }
+
+    public void removeAbonne(String nomClient, ClientHandler clientHandler) {
+        for (ClientHandler client : this.clients) {
+            if (client.getName().equals(nomClient)) {
+                this.abonnes.get(client).remove(clientHandler);
+            }
+        }
+    }
+
+    public void removeClient(ClientHandler clientHandler) {
+        this.clients.remove(clientHandler);
+        this.abonnes.remove(clientHandler);
+    }
+
+    public boolean nameAlreadyUsed(String name) {
+        for (ClientHandler client : this.clients) {
+            if (client.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void closeServer() {

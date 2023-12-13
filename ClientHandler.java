@@ -37,9 +37,28 @@ public class ClientHandler implements Runnable {
                             msg += args[i] + " ";
                         }
                         this.server.sendTo(personne, msg, this);
+                    } else if (message.startsWith("/follow")) {
+                        String[] args = message.split(" ");
+                        String personne = args[1];
+                        this.server.addAbonne(personne, this);
+                    } else if (message.startsWith("/unfollow")) {
+                        String[] args = message.split(" ");
+                        String personne = args[1];
+                        this.server.removeAbonne(personne, this);
+                    }else if (message.startsWith("/quit")) {
+                        this.server.removeClient(this);
+                        this.client.close();
+                        break;
+                    } else if (message.startsWith("/broadcast")) {
+                        String[] args = message.split(" ");
+                        String msg = "";
+                        for (int i = 1; i < args.length; i++) {
+                            msg += args[i] + " ";
+                        }
+                        this.server.broadcast(msg, this);
                     }
                 } else {
-                    this.server.handleMessage(message, this);
+                    this.server.sendToAbonnes(message, this);
                 }
             }
         } catch (Exception e) {
@@ -48,7 +67,9 @@ public class ClientHandler implements Runnable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (!this.server.nameAlreadyUsed(name)) {
+            this.name = name;
+        }
     }
 
     public String getName() {
