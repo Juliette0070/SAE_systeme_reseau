@@ -28,7 +28,7 @@ public class ClientHandler implements Runnable {
                 String message = reader.readLine();
                 if (message.startsWith("/")) {
                     if (message.startsWith("/name")) {
-                        this.setName(message.substring(6)); // traiter le nom
+                        this.setName(message.split(" ")[1]); // traiter le nom
                     } else if (message.startsWith("/msg")) {
                         String[] args = message.split(" ");
                         String personne = args[1];
