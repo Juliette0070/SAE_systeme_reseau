@@ -16,7 +16,7 @@ public class ClientHandler implements Runnable {
         this.client = clientSocket;
         this.server = server;
         this.writer = new PrintWriter(this.client.getOutputStream(), true);
-        this.name = "anonyme" + (int)(Math.random()*1000);
+        this.name = "anonyme" + (this.server.getNombreConnectes()+1); //(int)(Math.random()*1000);
     }
 
     @Override
@@ -29,6 +29,14 @@ public class ClientHandler implements Runnable {
                 if (message.startsWith("/")) {
                     if (message.startsWith("/name")) {
                         this.setName(message.substring(6)); // traiter le nom
+                    } else if (message.startsWith("/msg")) {
+                        String[] args = message.split(" ");
+                        String personne = args[1];
+                        String msg = "";
+                        for (int i = 2; i < args.length; i++) {
+                            msg += args[i] + " ";
+                        }
+                        this.server.sendTo(personne, msg, this);
                     }
                 } else {
                     this.server.handleMessage(message, this);
@@ -50,6 +58,8 @@ public class ClientHandler implements Runnable {
     public void sendMessage(String message) {
         this.writer.println(message);
     }
+
+
 
     @Override
     public String toString() {

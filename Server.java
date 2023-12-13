@@ -3,17 +3,21 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Server implements Runnable {
     
     private ServerSocket serverSocket;
     private BufferedReader reader;
     private List<ClientHandler> clients;
+    private Map<ClientHandler, List<ClientHandler>> abonnes;
 
     public Server() throws Exception {
         this.serverSocket = new ServerSocket(4444);
         this.clients = new ArrayList<ClientHandler>();
+        this.abonnes = new HashMap<>();
     }
 
     @Override
@@ -23,6 +27,7 @@ public class Server implements Runnable {
                 // System.out.println("Waiting for client...");
                 ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),this);
                 this.clients.add(clientHandler);
+                this.abonnes.put(clientHandler, new ArrayList<>());
                 Thread clientThread = new Thread(clientHandler);
                 clientThread.start();
             }
@@ -44,6 +49,14 @@ public class Server implements Runnable {
         }
     }
 
+    public void sendTo(String nomClient, String message, ClientHandler clientHandler) {
+        for (ClientHandler client : this.clients) {
+            if (client.getName().equals(nomClient)) {
+                client.sendMessage(clientHandler.getName() + "->You>" + message);
+            }
+        }
+    }
+
     private void closeServer() {
         System.out.println("Closing server...");
         try {
@@ -51,6 +64,10 @@ public class Server implements Runnable {
         } catch(Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public int getNombreConnectes(){
+        return this.clients.size();
     }
 
     public static void main(String[] args) throws Exception{
