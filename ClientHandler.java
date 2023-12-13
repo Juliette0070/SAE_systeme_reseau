@@ -56,6 +56,8 @@ public class ClientHandler implements Runnable {
                             msg += args[i] + " ";
                         }
                         this.server.broadcast(msg, this);
+                    } else {
+                        this.help();
                     }
                 } else {
                     this.server.sendToAbonnes(message, this);
@@ -64,6 +66,17 @@ public class ClientHandler implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void help() {
+        this.sendMessage("Commandes disponibles :");
+        this.sendMessage("/name <name> : change le nom du client");
+        this.sendMessage("/msg <name> <message> : envoie un message privé à <name>");
+        this.sendMessage("/follow <name> : suit les messages de <name>");
+        this.sendMessage("/unfollow <name> : ne suit plus les messages de <name>");
+        this.sendMessage("/broadcast <message> : envoie un message à tous les clients");
+        this.sendMessage("/quit : quitte le serveur");
+        this.sendMessage("/help : affiche les commandes");
     }
 
     public void setName(String name) {
@@ -79,8 +92,6 @@ public class ClientHandler implements Runnable {
     public void sendMessage(String message) {
         this.writer.println(message);
     }
-
-
 
     @Override
     public String toString() {

@@ -11,12 +11,10 @@ public class Server implements Runnable {
     
     private ServerSocket serverSocket;
     private BufferedReader reader;
-    private List<ClientHandler> clients;
     private Map<ClientHandler, List<ClientHandler>> abonnes;
 
     public Server() throws Exception {
         this.serverSocket = new ServerSocket(4444);
-        this.clients = new ArrayList<ClientHandler>();
         this.abonnes = new HashMap<>();
     }
 
@@ -26,7 +24,6 @@ public class Server implements Runnable {
             while(true) {
                 // System.out.println("Waiting for client...");
                 ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),this);
-                this.clients.add(clientHandler);
                 this.abonnes.put(clientHandler, new ArrayList<>());
                 Thread clientThread = new Thread(clientHandler);
                 clientThread.start();
@@ -38,13 +35,13 @@ public class Server implements Runnable {
     }
 
     public void broadcast(String message, ClientHandler clientHandler){
-        for (ClientHandler client : this.clients) {
+        for (ClientHandler client : this.abonnes.keySet()) {
             client.sendMessage(clientHandler.getName() + ">" + message);
         }
     }
 
     public void sendTo(String nomClient, String message, ClientHandler clientHandler) {
-        for (ClientHandler client : this.clients) {
+        for (ClientHandler client : this.abonnes.keySet()) {
             if (client.getName().equals(nomClient)) {
                 client.sendMessage(clientHandler.getName() + "->You>" + message);
             }
@@ -58,7 +55,7 @@ public class Server implements Runnable {
     }
 
     public void addAbonne(String nomClient, ClientHandler clientHandler) {
-        for (ClientHandler client : this.clients) {
+        for (ClientHandler client : this.abonnes.keySet()) {
             if (client.getName().equals(nomClient)) {
                 this.abonnes.get(client).add(clientHandler);
             }
@@ -66,7 +63,7 @@ public class Server implements Runnable {
     }
 
     public void removeAbonne(String nomClient, ClientHandler clientHandler) {
-        for (ClientHandler client : this.clients) {
+        for (ClientHandler client : this.abonnes.keySet()) {
             if (client.getName().equals(nomClient)) {
                 this.abonnes.get(client).remove(clientHandler);
             }
@@ -74,12 +71,11 @@ public class Server implements Runnable {
     }
 
     public void removeClient(ClientHandler clientHandler) {
-        this.clients.remove(clientHandler);
         this.abonnes.remove(clientHandler);
     }
 
     public boolean nameAlreadyUsed(String name) {
-        for (ClientHandler client : this.clients) {
+        for (ClientHandler client : this.abonnes.keySet()) {
             if (client.getName().equals(name)) {
                 return true;
             }
@@ -97,7 +93,7 @@ public class Server implements Runnable {
     }
 
     public int getNombreConnectes(){
-        return this.clients.size();
+        return this.abonnes.keySet().size();
     }
 
     public static void main(String[] args) throws Exception{
