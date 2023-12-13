@@ -38,6 +38,12 @@ public class Server implements Runnable {
         }
     }
 
+    public void handleMessage(String message, ClientHandler clientHandler){
+        for (ClientHandler client : this.clients) {
+            client.sendMessage(clientHandler.getName() + ">" + message);
+        }
+    }
+
     private void closeServer() {
         System.out.println("Closing server...");
         try {

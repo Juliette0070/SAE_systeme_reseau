@@ -10,11 +10,13 @@ public class ClientHandler implements Runnable {
     private BufferedReader reader;
     private PrintWriter writer;
     private Server server;
+    private String name;
 
     public ClientHandler(Socket clientSocket, Server server) throws Exception{
         this.client = clientSocket;
         this.server = server;
         this.writer = new PrintWriter(this.client.getOutputStream(), true);
+        this.name = "anonyme" + (int)(Math.random()*1000);
     }
 
     @Override
@@ -24,15 +26,33 @@ public class ClientHandler implements Runnable {
             this.reader = new BufferedReader(new InputStreamReader(this.client.getInputStream())); 
             while (true) {
                 String message = reader.readLine();
-                this.server.broadcast(message);
-                System.out.println(message);
+                if (message.startsWith("/")) {
+                    if (message.startsWith("/name")) {
+                        this.setName(message.substring(6)); // traiter le nom
+                    }
+                } else {
+                    this.server.handleMessage(message, this);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
     public void sendMessage(String message) {
         this.writer.println(message);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }
