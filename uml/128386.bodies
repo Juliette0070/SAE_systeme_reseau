@@ -1,0 +1,64 @@
+class Server
+!!!129666.java!!!	Server()
+        this.serverSocket = new ServerSocket(4444);
+        this.abonnes = new HashMap<>();
+!!!129794.java!!!	run() : void
+        try {
+            while(true) {
+                // System.out.println("Waiting for client...");
+                ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),this);
+                this.abonnes.put(clientHandler, new ArrayList<>());
+                Thread clientThread = new Thread(clientHandler);
+                clientThread.start();
+            }
+        } catch(Exception e) {
+            closeServer();
+            e.printStackTrace();
+        }
+!!!129922.java!!!	broadcast(in message : String, inout clientHandler : ClientHandler) : void
+        for (ClientHandler client : this.abonnes.keySet()) {
+            client.sendMessage(clientHandler.getName() + ">" + message);
+        }
+!!!130050.java!!!	sendTo(in nomClient : String, in message : String, inout clientHandler : ClientHandler) : void
+        for (ClientHandler client : this.abonnes.keySet()) {
+            if (client.getName().equals(nomClient)) {
+                client.sendMessage(clientHandler.getName() + "->You>" + message);
+            }
+        }
+!!!130178.java!!!	sendToAbonnes(in message : String, inout clientHandler : ClientHandler) : void
+        for (ClientHandler client : this.abonnes.get(clientHandler)) {
+            client.sendMessage(clientHandler.getName() + ">" + message);
+        }
+!!!130306.java!!!	addAbonne(in nomClient : String, inout clientHandler : ClientHandler) : void
+        for (ClientHandler client : this.abonnes.keySet()) {
+            if (client.getName().equals(nomClient)) {
+                this.abonnes.get(client).add(clientHandler);
+            }
+        }
+!!!130434.java!!!	removeAbonne(in nomClient : String, inout clientHandler : ClientHandler) : void
+        for (ClientHandler client : this.abonnes.keySet()) {
+            if (client.getName().equals(nomClient)) {
+                this.abonnes.get(client).remove(clientHandler);
+            }
+        }
+!!!130562.java!!!	removeClient(inout clientHandler : ClientHandler) : void
+        this.abonnes.remove(clientHandler);
+!!!130690.java!!!	nameAlreadyUsed(in name : String) : boolean
+        for (ClientHandler client : this.abonnes.keySet()) {
+            if (client.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+!!!130818.java!!!	closeServer() : void
+        System.out.println("Closing server...");
+        try {
+            this.serverSocket.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+!!!130946.java!!!	getNombreConnectes() : int
+        return this.abonnes.keySet().size();
+!!!131074.java!!!	main(inout args : String [[]]) : void
+        Server server = new Server();
+        server.run();

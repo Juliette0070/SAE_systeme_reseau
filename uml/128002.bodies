@@ -1,0 +1,31 @@
+class Client
+!!!128002.java!!!	Client()
+        this.clientSocket = new Socket("localhost", 4444); // Pour se connecter en local
+        // this.clientSocket = new Socket("0.tcp.eu.ngrok.io", 17204); // Pour se connecter au i
+        this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
+!!!128130.java!!!	run() : void
+        try {
+            InputHandler inputHandler = new InputHandler(this.clientSocket);
+            Thread inputThread = new Thread(inputHandler);
+            inputThread.start();
+
+            String message;
+            while ((message = reader.readLine()) != null) {
+                System.out.println(message);
+            }
+        } catch (Exception e) {
+            closeSocket();
+            e.printStackTrace();
+        }
+!!!128258.java!!!	closeSocket() : void
+        try {
+            this.clientSocket.close();
+            this.reader.close();
+            this.writer.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+!!!128386.java!!!	main(inout args : String [[]]) : void
+        Client client = new Client();
+        client.run();
