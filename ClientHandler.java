@@ -27,6 +27,9 @@ public class ClientHandler implements Runnable {
             this.reader = new BufferedReader(new InputStreamReader(this.client.getInputStream())); 
             while (true) {
                 String message = reader.readLine();
+                if (message == null || message.equals("")) {
+                    continue;
+                }
                 if (message.startsWith("/")) {
                     if (message.startsWith("/name")) {
                         this.setName(message.split(" ")[1]);
@@ -34,9 +37,7 @@ public class ClientHandler implements Runnable {
                         String[] args = message.split(" ");
                         String personne = args[1];
                         String msg = "";
-                        for (int i = 2; i < args.length; i++) {
-                            msg += args[i] + " ";
-                        }
+                        for (int i = 2; i < args.length; i++) {msg += args[i] + " ";}
                         this.server.sendTo(personne, msg, this);
                     } else if (message.startsWith("/follow")) {
                         String[] args = message.split(" ");
