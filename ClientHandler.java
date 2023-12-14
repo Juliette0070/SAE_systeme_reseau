@@ -3,6 +3,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 public class ClientHandler implements Runnable {
     
@@ -45,7 +46,7 @@ public class ClientHandler implements Runnable {
                         String[] args = message.split(" ");
                         String personne = args[1];
                         this.server.removeAbonne(personne, this);
-                    }else if (message.startsWith("/quit")) {
+                    } else if (message.startsWith("/quit")) {
                         this.server.removeClient(this);
                         this.client.close();
                         break;
@@ -56,6 +57,8 @@ public class ClientHandler implements Runnable {
                             msg += args[i] + " ";
                         }
                         this.server.broadcast(msg, this);
+                    } else if (message.startsWith("/list")) {
+                        this.afficherUtilisateurs();
                     } else {
                         this.help();
                     }
@@ -68,6 +71,35 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    public void afficherUtilisateurs() {
+        this.sendMessage("Utilisateurs connectés :");
+        for (String client : this.server.getUtilisateurs()) {
+            String personne = client;
+            if (client.equals(this.name)) {
+                personne += " (vous)";
+            } else {
+                boolean vousSuit = false;
+                boolean suivi = false;
+                for (ClientHandler abonne : this.server.getAbonnes(this)) {
+                    if (abonne.getName().equals(client)) {
+                        vousSuit = true;
+                        break;
+                    }
+                } if (this.server.getAbonnes(client).contains(this)) {
+                    suivi = true;
+                }
+                if (vousSuit && suivi) {
+                    personne += " (amis)";
+                } else if (vousSuit) {
+                    personne += " (vous suit)";
+                } else if (suivi) {
+                    personne += " (suivi)";
+                }
+            }
+            this.sendMessage(personne);
+        }
+    }
+
     public void help() {
         this.sendMessage("Commandes disponibles :");
         this.sendMessage("/name <name> : change le nom du client");
@@ -75,6 +107,7 @@ public class ClientHandler implements Runnable {
         this.sendMessage("/follow <name> : suit les messages de <name>");
         this.sendMessage("/unfollow <name> : ne suit plus les messages de <name>");
         this.sendMessage("/broadcast <message> : envoie un message à tous les clients");
+        this.sendMessage("/list : affiche les utilisateurs connectés");
         this.sendMessage("/quit : quitte le serveur");
         this.sendMessage("/help : affiche les commandes");
     }

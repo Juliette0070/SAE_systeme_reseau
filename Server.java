@@ -34,9 +34,40 @@ public class Server implements Runnable {
         }
     }
 
+    public List<String> getUtilisateurs() {
+        List<String> utilisateurs = new ArrayList<>();
+        for (ClientHandler client : this.abonnes.keySet()) {
+            utilisateurs.add(client.getName());
+        }
+        return utilisateurs;
+    }
+
+    public List<ClientHandler> getAbonnes(ClientHandler clientHandler) {
+        List<ClientHandler> abonnes = new ArrayList<>();
+        for (ClientHandler client : this.abonnes.get(clientHandler)) {
+            abonnes.add(client);
+        }
+        return abonnes;
+    }
+
+    public Map<ClientHandler, List<ClientHandler>> getAbonnes() {
+        return this.abonnes;
+    }
+
+    public List<ClientHandler> getAbonnes(String nomClient) {
+        for (ClientHandler client : this.abonnes.keySet()) {
+            if (client.getName().equals(nomClient)) {
+                return this.abonnes.get(client);
+            }
+        }
+        return null;
+    }
+
     public void broadcast(String message, ClientHandler clientHandler){
         for (ClientHandler client : this.abonnes.keySet()) {
-            client.sendMessage(clientHandler.getName() + ">" + message);
+            if (!client.getName().equals(clientHandler.getName())) {
+                client.sendMessage(clientHandler.getName() + ">" + message);
+            }
         }
     }
 
@@ -55,9 +86,11 @@ public class Server implements Runnable {
     }
 
     public void addAbonne(String nomClient, ClientHandler clientHandler) {
-        for (ClientHandler client : this.abonnes.keySet()) {
-            if (client.getName().equals(nomClient)) {
-                this.abonnes.get(client).add(clientHandler);
+        if (!nomClient.equals(clientHandler.getName())) {
+            for (ClientHandler client : this.abonnes.keySet()) {
+                if (client.getName().equals(nomClient)) {
+                    this.abonnes.get(client).add(clientHandler);
+                }
             }
         }
     }

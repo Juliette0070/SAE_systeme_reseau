@@ -1,0 +1,15 @@
+window_sizes 1920 1031 450 1464 883 96
+cleanlooks_style
+diagrams
+  active  classdiagram_ref 128002 // diagramme
+    1464 883 100 A4 0 0
+end
+show_stereotypes
+selected class_ref 128130 // Runnable
+open
+  classview_ref 128002 // vue
+  classview_ref 128130 // SAE_systeme_reseau
+  deploymentview_ref 128002 // SAE_systeme_reseau
+  classview_ref 128258 // unknown
+end
+end
