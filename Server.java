@@ -34,9 +34,13 @@ public class Server implements Runnable {
         }
     }
 
+    // Gestion des messages
+
     public void handleMessage(String message, ClientHandler clientHandler) {
 
     }
+
+    // messages
 
     public void broadcast(String message, ClientHandler clientHandler){
         for (ClientHandler client : this.clients.keySet()) {
@@ -59,6 +63,10 @@ public class Server implements Runnable {
             client.sendMessage(clientHandler.getName() + ">" + message);
         }
     }
+
+    // commandes
+
+    
 
     // Getters et setters
 
