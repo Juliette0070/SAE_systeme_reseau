@@ -1,64 +1,138 @@
-class Server
-!!!129666.java!!!	Server()
-        this.serverSocket = new ServerSocket(4444);
-        this.abonnes = new HashMap<>();
-!!!129794.java!!!	run() : void
+class ClientHandler
+!!!128642.java!!!	ClientHandler(inout clientSocket : Socket, inout server : Server)
+        this.client = clientSocket;
+        this.server = server;
+        this.writer = new PrintWriter(this.client.getOutputStream(), true);
+        this.utilisateur = null;
+!!!128770.java!!!	run() : void
+        System.out.println(this.client.getInetAddress() + " connected.");
         try {
-            while(true) {
-                // System.out.println("Waiting for client...");
-                ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),this);
-                this.abonnes.put(clientHandler, new ArrayList<>());
-                Thread clientThread = new Thread(clientHandler);
-                clientThread.start();
+            this.reader = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
+            while (this.utilisateur == null) {
+                try {
+                    this.recupererUtilisateur();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch(Exception e) {
-            closeServer();
+            this.utilisateur.setConnecte(true);
+            this.sendMessage("Bienvenue " + this.utilisateur.getPseudo() + " !");
+            while (this.utilisateur.isConnecte()) {
+                String message = reader.readLine();
+                if (message == null || message.equals("")) {
+                    continue;
+                }
+                if (message.startsWith("/")) {
+                    this.handleCommande(message);
+                } else {
+                    this.server.sendToAbonnes(this.server.createMessage(message, this.utilisateur));
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(this.client.getInetAddress() + " encountered an error.");
         }
-!!!129922.java!!!	broadcast(in message : String, inout clientHandler : ClientHandler) : void
-        for (ClientHandler client : this.abonnes.keySet()) {
-            client.sendMessage(clientHandler.getName() + ">" + message);
-        }
-!!!130050.java!!!	sendTo(in nomClient : String, in message : String, inout clientHandler : ClientHandler) : void
-        for (ClientHandler client : this.abonnes.keySet()) {
-            if (client.getName().equals(nomClient)) {
-                client.sendMessage(clientHandler.getName() + "->You>" + message);
+        System.out.println(this.client.getInetAddress() + " disconnected.");
+!!!128898.java!!!	getUtilisateur() : Utilisateur
+        return this.utilisateur;
+!!!129026.java!!!	recupererUtilisateur() : void
+        this.sendMessage("Pseudo:");
+        String pseudo = this.reader.readLine();
+        this.sendMessage("Mot de passe:");
+        String motDePasse = this.reader.readLine();
+        this.utilisateur = this.server.getUtilisateur(pseudo);
+        if (this.utilisateur == null) {
+            this.sendMessage("Cet utilisateur n'existe pas, voulez-vous le créer ? (o/n)");
+            String reponse = this.reader.readLine();
+            if (reponse.equals("o") || reponse.equals("oui")) {
+                this.utilisateur = new Utilisateur(pseudo, motDePasse);
+                this.server.addUtilisateur(this.utilisateur);
+                this.sendMessage("Utilisateur créé !");
             }
+        } else if (this.utilisateur.isConnecte()) {
+            this.utilisateur = null;
+            this.sendMessage("Cet utilisateur est déjà connecté !");
+        } else if (!this.utilisateur.getMotDePasse().equals(motDePasse)) {
+            this.utilisateur = null;
+            this.sendMessage("Mot de passe incorrect !");
         }
-!!!130178.java!!!	sendToAbonnes(in message : String, inout clientHandler : ClientHandler) : void
-        for (ClientHandler client : this.abonnes.get(clientHandler)) {
-            client.sendMessage(clientHandler.getName() + ">" + message);
-        }
-!!!130306.java!!!	addAbonne(in nomClient : String, inout clientHandler : ClientHandler) : void
-        for (ClientHandler client : this.abonnes.keySet()) {
-            if (client.getName().equals(nomClient)) {
-                this.abonnes.get(client).add(clientHandler);
+!!!129154.java!!!	handleCommande(in commande : String) : void
+        if (commande.startsWith("/name")) {
+            String nom = commande.split(" ")[1];
+            if (this.server.getUtilisateur(nom) == null) {
+                this.utilisateur.setPseudo(nom);
+            } else {
+                this.sendMessage("Ce pseudo est déjà utilisé !");
             }
-        }
-!!!130434.java!!!	removeAbonne(in nomClient : String, inout clientHandler : ClientHandler) : void
-        for (ClientHandler client : this.abonnes.keySet()) {
-            if (client.getName().equals(nomClient)) {
-                this.abonnes.get(client).remove(clientHandler);
+        } else if (commande.startsWith("/msg")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            String msg = "";
+            for (int i = 2; i < args.length; i++) {msg += args[i] + " ";}
+            this.server.sendTo(personne, this.server.createMessage(msg, this.utilisateur));
+        } else if (commande.startsWith("/follow")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            this.utilisateur.addAbonne(this.server.getUtilisateur(personne));
+            this.sendMessage("Vous suivez désormais " + personne + ".");
+        } else if (commande.startsWith("/unfollow")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            this.utilisateur.removeAbonne(this.server.getUtilisateur(personne));
+            this.sendMessage("Vous ne suivez plus " + personne + ".");
+        } else if (commande.startsWith("/quit")) {
+            this.utilisateur.setConnecte(false);
+            this.client.close();
+        } else if (commande.startsWith("/broadcast")) {
+            String[] args = commande.split(" ");
+            String msg = "";
+            for (int i = 1; i < args.length; i++) {
+                msg += args[i] + " ";
             }
+            this.server.broadcast(this.server.createMessage(msg, this.utilisateur));
+            this.server.broadcast(new Message(0, msg, utilisateur));
+        } else if (commande.startsWith("/list")) {
+            this.afficherUtilisateurs();
+        } else {
+            this.help();
         }
-!!!130562.java!!!	removeClient(inout clientHandler : ClientHandler) : void
-        this.abonnes.remove(clientHandler);
-!!!130690.java!!!	nameAlreadyUsed(in name : String) : boolean
-        for (ClientHandler client : this.abonnes.keySet()) {
-            if (client.getName().equals(name)) {
-                return true;
+!!!129282.java!!!	afficherUtilisateurs() : void
+        String liste = "Utilisateurs connectés :";
+        for (Utilisateur client : this.server.getUtilisateurs()) {
+            String personne = client.getPseudo();
+            if (client.equals(this.utilisateur)) {personne += " (vous)";}
+            else {
+                boolean vousSuit = false;
+                boolean suivi = false;
+                for (Utilisateur abonne : this.utilisateur.getAbonnes()) {
+                    if (abonne.equals(client)) {
+                        vousSuit = true;
+                        break;
+                    }
+                } if (client.getAbonnes().contains(this.utilisateur)) {suivi = true;}
+                if (vousSuit && suivi) {personne += " (amis)";}
+                else if (vousSuit) {personne += " (vous suit)";}
+                else if (suivi) {personne += " (suivi)";}
             }
-        }
-        return false;
-!!!130818.java!!!	closeServer() : void
-        System.out.println("Closing server...");
-        try {
-            this.serverSocket.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-!!!130946.java!!!	getNombreConnectes() : int
-        return this.abonnes.keySet().size();
-!!!131074.java!!!	main(inout args : String [[]]) : void
-        Server server = new Server();
-        server.run();
+            liste += "\n" + personne;
+        } liste = liste.substring(0, liste.length() - 1);
+        this.sendMessage(liste);
+!!!129410.java!!!	help() : void
+        String aide = "Commandes disponibles :\n";
+        aide += "/name <name> : change le nom du client\n";
+        aide += "/msg <name> <message> : envoie un message privé à <name>\n";
+        aide += "/follow <name> : suit les messages de <name>\n";
+        aide += "/unfollow <name> : ne suit plus les messages de <name>\n";
+        aide += "/broadcast <message> : envoie un message à tous les clients\n";
+        aide += "/list : affiche les utilisateurs connectés\n";
+        aide += "/quit : quitte le serveur\n";
+        aide += "/help : affiche les commandes";
+        this.sendMessage(aide);
+!!!129538.java!!!	sendMessage(inout message : Message) : void
+        this.writer.println(message);
+!!!129666.java!!!	sendMessage(in message : String) : void
+        Message msg = this.server.createMessage(message, this.utilisateur);
+        this.server.addMessage(msg);
+        this.writer.println(msg);
+!!!129794.java!!!	toString() : String
+        return this.utilisateur.getPseudo();

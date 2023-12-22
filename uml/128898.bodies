@@ -1,0 +1,14 @@
+class InputHandler
+!!!129922.java!!!	InputHandler(inout clientSocket : Socket)
+        this.clientSocket = clientSocket;
+!!!130050.java!!!	run() : void
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+            while (true) {
+                String message = reader.readLine();
+                writer.println(message);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }

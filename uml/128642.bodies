@@ -1,0 +1,55 @@
+class Utilisateur
+!!!133890.java!!!	Utilisateur(in pseudo : String, in motDePasse : String)
+        this.pseudo = pseudo;
+        this.motDePasse = motDePasse;
+        this.abonnes = new ArrayList<>();
+        this.connecte = true;
+        this.messages = new HashMap<>();
+!!!134018.java!!!	getPseudo() : String
+        return this.pseudo;
+!!!134146.java!!!	setPseudo(in pseudo : String) : void
+        this.pseudo = pseudo;
+!!!134274.java!!!	getMotDePasse() : String
+        return this.motDePasse;
+!!!134402.java!!!	setMotDePasse(in motDePasse : String) : void
+        this.motDePasse = motDePasse;
+!!!134530.java!!!	getAbonnes() : Utilisateur
+        return this.abonnes;
+!!!134658.java!!!	addAbonne(inout utilisateur : Utilisateur) : void
+        this.abonnes.add(utilisateur);
+!!!134786.java!!!	removeAbonne(inout utilisateur : Utilisateur) : void
+        this.abonnes.remove(utilisateur);
+!!!134914.java!!!	isConnecte() : boolean
+        return this.connecte;
+!!!135042.java!!!	setConnecte(inout connecte : boolean) : void
+        this.connecte = connecte;
+!!!135170.java!!!	getMessages() : Message
+        return this.messages;
+!!!135298.java!!!	addMessage(inout message : Message) : void
+        boolean lu = false;
+        if (this.connecte) {lu = true;}
+        this.messages.put(message, lu);
+!!!135426.java!!!	removeMessage(inout message : Message) : void
+        this.messages.remove(message);
+!!!135554.java!!!	setLu(inout message : Message) : void
+        this.messages.put(message, true);
+!!!135682.java!!!	setNonLu(inout message : Message) : void
+        this.messages.put(message, false);
+!!!135810.java!!!	setAllLu() : void
+        for (Message message : this.messages.keySet()) {
+            this.messages.put(message, true);
+        }
+!!!135938.java!!!	setAllNonLu() : void
+        for (Message message : this.messages.keySet()) {
+            this.messages.put(message, false);
+        }
+!!!136066.java!!!	getNombreMessages() : int
+        return this.messages.keySet().size();
+!!!136194.java!!!	getMessagesNonLus() : Message
+        Set<Message> messagesNonLus = new HashSet<>();
+        for (Message message : this.messages.keySet()) {
+            if (!this.messages.get(message)) {
+                messagesNonLus.add(message);
+            }
+        }
+        return messagesNonLus;
