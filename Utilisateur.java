@@ -6,11 +6,13 @@ public class Utilisateur {
     private String pseudo;
     private String motDePasse;
     private List<Utilisateur> abonnements;
+    private boolean connecte;
 
     public Utilisateur(String pseudo, String motDePasse) {
         this.pseudo = pseudo;
         this.motDePasse = motDePasse;
         this.abonnements = new ArrayList<>();
+        this.connecte = true;
     }
 
     public String getPseudo() {
@@ -39,5 +41,13 @@ public class Utilisateur {
 
     public void removeAbonnement(Utilisateur utilisateur) {
         this.abonnements.remove(utilisateur);
+    }
+
+    public boolean isConnecte() {
+        return this.connecte;
+    }
+
+    public void setConnecte(boolean connecte) {
+        this.connecte = connecte;
     }
 }

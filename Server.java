@@ -49,7 +49,9 @@ public class Server implements Runnable {
     // Tests
 
     public void addMessage(String contenu, Utilisateur expediteur) {
-        this.messages.add(new Message(this.messages.size()+1, contenu, expediteur));
+        synchronized(this.messages) {
+            this.messages.add(new Message(this.messages.size()+1, contenu, expediteur));
+        }
     }
 
     public Utilisateur getUtilisateur(String pseudo) {
