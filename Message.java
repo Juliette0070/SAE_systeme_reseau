@@ -1,6 +1,6 @@
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Message {
     
@@ -8,14 +8,14 @@ public class Message {
     private String contenu;
     private Utilisateur expediteur;
     private Date date;
-    private List<Utilisateur> likes;
+    private Set<Utilisateur> likes;
 
     public Message(int id, String contenu, Utilisateur expediteur) {
         this.id = id;
         this.contenu = contenu;
         this.expediteur = expediteur;
         this.date = new Date();
-        this.likes = new ArrayList<>();
+        this.likes = new HashSet<>();
     }
 
     public int getId() {
@@ -50,7 +50,7 @@ public class Message {
         this.date = date;
     }
 
-    public List<Utilisateur> getLikes() {
+    public Set<Utilisateur> getLikes() {
         return this.likes;
     }
     
@@ -72,7 +72,7 @@ public class Message {
                 ", contenu='" + this.contenu + '\'' +
                 ", expediteur='" + this.expediteur + '\'' +
                 ", date=" + this.date +
-                ", likes=" + this.likes +
+                ", likes=" + this.likes.size() +
                 '}';
     }
 }
