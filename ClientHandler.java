@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -12,63 +13,89 @@ public class ClientHandler implements Runnable {
     private PrintWriter writer;
     private Server server;
     private String name;
+    private Utilisateur utilisateur;
 
     public ClientHandler(Socket clientSocket, Server server) throws Exception{
         this.client = clientSocket;
         this.server = server;
         this.writer = new PrintWriter(this.client.getOutputStream(), true);
         this.name = "anonyme" + (this.server.getNombreConnectes()+1); //(int)(Math.random()*1000);
+        this.utilisateur = null;
     }
 
     @Override
     public void run() {
         System.out.println(this.client.getInetAddress() + " connected.");
         try {
-            this.reader = new BufferedReader(new InputStreamReader(this.client.getInputStream())); 
+            this.reader = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
+            while (this.utilisateur == null) {
+                try {
+                    this.recupererUtilisateur();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } this.sendMessage("Bienvenue " + this.utilisateur.getPseudo() + " !");
             while (true) {
                 String message = reader.readLine();
                 if (message == null || message.equals("")) {
                     continue;
                 }
                 if (message.startsWith("/")) {
-                    if (message.startsWith("/name")) {
-                        this.setName(message.split(" ")[1]);
-                    } else if (message.startsWith("/msg")) {
-                        String[] args = message.split(" ");
-                        String personne = args[1];
-                        String msg = "";
-                        for (int i = 2; i < args.length; i++) {msg += args[i] + " ";}
-                        this.server.sendTo(personne, msg, this);
-                    } else if (message.startsWith("/follow")) {
-                        String[] args = message.split(" ");
-                        String personne = args[1];
-                        this.server.addAbonne(personne, this);
-                    } else if (message.startsWith("/unfollow")) {
-                        String[] args = message.split(" ");
-                        String personne = args[1];
-                        this.server.removeAbonne(personne, this);
-                    } else if (message.startsWith("/quit")) {
-                        this.server.removeClient(this);
-                        this.client.close();
-                        break;
-                    } else if (message.startsWith("/broadcast")) {
-                        String[] args = message.split(" ");
-                        String msg = "";
-                        for (int i = 1; i < args.length; i++) {
-                            msg += args[i] + " ";
-                        }
-                        this.server.broadcast(msg, this);
-                    } else if (message.startsWith("/list")) {
-                        this.afficherUtilisateurs();
-                    } else {
-                        this.help();
-                    }
+                    this.handleCommande(message);
                 } else {
                     this.server.sendToAbonnes(message, this);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void recupererUtilisateur() throws IOException {
+        this.sendMessage("Pseudo:");
+        String pseudo = this.reader.readLine();
+        this.sendMessage("Mot de passe:");
+        String motDePasse = this.reader.readLine();
+        this.utilisateur = this.server.getUtilisateur(pseudo);
+        if (this.utilisateur == null) {
+            this.utilisateur = new Utilisateur(pseudo, motDePasse);
+            this.server.addUtilisateur(this.utilisateur);
+        } else if (!this.utilisateur.getMotDePasse().equals(motDePasse)) {
+            this.utilisateur = null;
+        }
+    }
+
+    public void handleCommande(String commande) throws IOException {
+        if (commande.startsWith("/name")) {
+            this.setName(commande.split(" ")[1]);
+        } else if (commande.startsWith("/msg")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            String msg = "";
+            for (int i = 2; i < args.length; i++) {msg += args[i] + " ";}
+            this.server.sendTo(personne, msg, this);
+        } else if (commande.startsWith("/follow")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            this.server.addAbonne(personne, this);
+        } else if (commande.startsWith("/unfollow")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            this.server.removeAbonne(personne, this);
+        } else if (commande.startsWith("/quit")) {
+            this.server.removeClient(this);
+            this.client.close();
+        } else if (commande.startsWith("/broadcast")) {
+            String[] args = commande.split(" ");
+            String msg = "";
+            for (int i = 1; i < args.length; i++) {
+                msg += args[i] + " ";
+            }
+            this.server.broadcast(msg, this);
+        } else if (commande.startsWith("/list")) {
+            this.afficherUtilisateurs();
+        } else {
+            this.help();
         }
     }
 

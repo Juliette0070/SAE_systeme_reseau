@@ -7,15 +7,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * à faire:
+ * vérifier si l'utilisateur existe déjà
+ * - si oui, vérifier si le mot de passe est correct et qu'il n'est pas déjà connecté
+ * - si non, créer l'utilisateur
+ * ajuster les autres méthodes en conséquence
+ */
+
 public class Server implements Runnable {
     
     private ServerSocket serverSocket;
     private BufferedReader reader;
-    private Map<ClientHandler, List<ClientHandler>> clients;
+    private Map<ClientHandler, List<ClientHandler>> clients; // ancienne version à supprimer mais j'ai pas encore converti le reste
+    private List<Message> messages;
+    private List<Utilisateur> utilisateurs;
 
     public Server() throws Exception {
         this.serverSocket = new ServerSocket(4444);
         this.clients = new HashMap<>();
+        this.messages = new ArrayList<>();
+        this.utilisateurs = new ArrayList<>();
     }
 
     @Override
@@ -34,6 +46,35 @@ public class Server implements Runnable {
         }
     }
 
+    // Tests
+
+    public void addMessage(String contenu, Utilisateur expediteur) {
+        this.messages.add(new Message(this.messages.size()+1, contenu, expediteur));
+    }
+
+    public Utilisateur getUtilisateur(String pseudo) {
+        for (Utilisateur utilisateur : this.utilisateurs) {
+            if (utilisateur.getPseudo().equals(pseudo)) {
+                return utilisateur;
+            }
+        }
+        return null;
+    }
+
+    public void addUtilisateur(Utilisateur utilisateur) {
+        this.utilisateurs.add(utilisateur);
+    }
+
+    public void test() {
+        System.out.println("ID:000 | 20/01/2024-09:00 | 3♥");
+        System.out.println("toto> Hello world !");
+    }
+
+    public void test(Message message) {
+        System.out.println("ID:" + message.getId() + " | " + message.getDate() + " | " + message.getLikes().size() + "likes");
+        System.out.println(message.getExpediteur() + "> " + message.getContenu());
+    }
+    
     // Gestion des messages
 
     public void handleMessage(String message, ClientHandler clientHandler) {
@@ -63,10 +104,6 @@ public class Server implements Runnable {
             client.sendMessage(clientHandler.getName() + ">" + message);
         }
     }
-
-    // commandes
-
-    
 
     // Getters et setters
 
