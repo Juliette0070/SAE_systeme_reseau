@@ -28,6 +28,7 @@ public class Server implements Runnable {
         this.serverSocket = new ServerSocket(4444);
         this.messages = new ArrayList<>();
         this.utilisateurs = new HashSet<>();
+        this.utilisateurs.add(new Utilisateur("Serveur", "admin"));
     }
 
     @Override
@@ -46,6 +47,10 @@ public class Server implements Runnable {
     }
 
     // Tests
+
+    public Utilisateur getUtilisateurServer() {
+        return this.getUtilisateur("Serveur");
+    }
 
     public Utilisateur getUtilisateur(String pseudo) {
         for (Utilisateur utilisateur : this.utilisateurs) {

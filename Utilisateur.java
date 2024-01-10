@@ -104,4 +104,9 @@ public class Utilisateur {
         }
         return messagesNonLus;
     }
+
+    @Override
+    public String toString() {
+        return this.pseudo;
+    }
 }

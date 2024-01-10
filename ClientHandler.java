@@ -33,7 +33,7 @@ public class ClientHandler implements Runnable {
                 }
             }
             this.utilisateur.setConnecte(true);
-            this.sendMessage("Bienvenue " + this.utilisateur.getPseudo() + " !");
+            this.sendMessageFromServer("Bienvenue " + this.utilisateur.getPseudo() + " !");
             while (this.utilisateur.isConnecte()) {
                 String message = reader.readLine();
                 if (message == null || message.equals("")) {
@@ -57,25 +57,25 @@ public class ClientHandler implements Runnable {
     }
 
     public void recupererUtilisateur() throws IOException {
-        this.sendMessage("Pseudo:");
+        this.sendMessageFromServer("Pseudo:");
         String pseudo = this.reader.readLine();
-        this.sendMessage("Mot de passe:");
+        this.sendMessageFromServer("Mot de passe:");
         String motDePasse = this.reader.readLine();
         this.utilisateur = this.server.getUtilisateur(pseudo);
         if (this.utilisateur == null) {
-            this.sendMessage("Cet utilisateur n'existe pas, voulez-vous le créer ? (o/n)");
+            this.sendMessageFromServer("Cet utilisateur n'existe pas, voulez-vous le créer ? (o/n)");
             String reponse = this.reader.readLine();
             if (reponse.equals("o") || reponse.equals("oui")) {
                 this.utilisateur = new Utilisateur(pseudo, motDePasse);
                 this.server.addUtilisateur(this.utilisateur);
-                this.sendMessage("Utilisateur créé !");
+                this.sendMessageFromServer("Utilisateur créé !");
             }
         } else if (this.utilisateur.isConnecte()) {
             this.utilisateur = null;
-            this.sendMessage("Cet utilisateur est déjà connecté !");
+            this.sendMessageFromServer("Cet utilisateur est déjà connecté !");
         } else if (!this.utilisateur.getMotDePasse().equals(motDePasse)) {
             this.utilisateur = null;
-            this.sendMessage("Mot de passe incorrect !");
+            this.sendMessageFromServer("Mot de passe incorrect !");
         }
     }
 
@@ -85,7 +85,7 @@ public class ClientHandler implements Runnable {
             if (this.server.getUtilisateur(nom) == null) {
                 this.utilisateur.setPseudo(nom);
             } else {
-                this.sendMessage("Ce pseudo est déjà utilisé !");
+                this.sendMessageFromServer("Ce pseudo est déjà utilisé !");
             }
         } else if (commande.startsWith("/msg")) {
             String[] args = commande.split(" ");
@@ -97,12 +97,12 @@ public class ClientHandler implements Runnable {
             String[] args = commande.split(" ");
             String personne = args[1];
             this.utilisateur.addAbonne(this.server.getUtilisateur(personne));
-            this.sendMessage("Vous suivez désormais " + personne + ".");
+            this.sendMessageFromServer("Vous suivez désormais " + personne + ".");
         } else if (commande.startsWith("/unfollow")) {
             String[] args = commande.split(" ");
             String personne = args[1];
             this.utilisateur.removeAbonne(this.server.getUtilisateur(personne));
-            this.sendMessage("Vous ne suivez plus " + personne + ".");
+            this.sendMessageFromServer("Vous ne suivez plus " + personne + ".");
         } else if (commande.startsWith("/quit")) {
             this.utilisateur.setConnecte(false);
             this.client.close();
@@ -137,11 +137,10 @@ public class ClientHandler implements Runnable {
                 } if (client.getAbonnes().contains(this.utilisateur)) {suivi = true;}
                 if (vousSuit && suivi) {personne += " (amis)";}
                 else if (vousSuit) {personne += " (vous suit)";}
-                else if (suivi) {personne += " (suivi)";}
+                else if (suivi) {personne += " (suivi)";} 
             }
             liste += "\n" + personne;
-        } liste = liste.substring(0, liste.length() - 1);
-        this.sendMessage(liste);
+        } this.sendMessage(liste);
     }
 
     public void help() {
@@ -163,6 +162,12 @@ public class ClientHandler implements Runnable {
 
     public void sendMessage(String message) {
         Message msg = this.server.createMessage(message, this.utilisateur);
+        this.server.addMessage(msg);
+        this.writer.println(msg);
+    }
+
+    public void sendMessageFromServer(String message) {
+        Message msg = this.server.createMessage(message, this.server.getUtilisateurServer());
         this.server.addMessage(msg);
         this.writer.println(msg);
     }

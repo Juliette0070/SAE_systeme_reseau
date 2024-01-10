@@ -68,11 +68,11 @@ public class Message {
 
     @Override
     public String toString() {
-        return "{id=" + this.id +
-                ", contenu='" + this.contenu + '\'' +
-                ", expediteur='" + this.expediteur + '\'' +
-                ", date=" + this.date +
-                ", likes=" + this.likes.size() +
+        return "{\"id\":" + this.id +
+                ", \"contenu\":\"" + this.contenu + '"' +
+                ", \"expediteur\":\"" + this.expediteur + '"' +
+                ", \"date\":" + this.date +
+                ", \"likes\":" + this.likes.size() +
                 '}';
     }
 }

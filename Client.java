@@ -25,12 +25,16 @@ public class Client implements Runnable {
 
             String message;
             while ((message = reader.readLine()) != null) {
-                System.out.println(message);
+                this.afficheMessage(message);
             }
         } catch (Exception e) {
             closeSocket();
             e.printStackTrace();
         }
+    }
+
+    public void afficheMessage(String message) {
+        System.out.println(message);
     }
 
     private void closeSocket() {
