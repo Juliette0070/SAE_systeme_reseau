@@ -33,6 +33,7 @@ public class ClientHandler implements Runnable {
                 }
             }
             this.utilisateur.setConnecte(true);
+            this.utilisateur.setClient(this);
             this.sendMessageFromServer("Bienvenue " + this.utilisateur.getPseudo() + " !");
             while (this.utilisateur.isConnecte()) {
                 String message = reader.readLine();
@@ -96,15 +97,16 @@ public class ClientHandler implements Runnable {
         } else if (commande.startsWith("/follow")) {
             String[] args = commande.split(" ");
             String personne = args[1];
-            this.utilisateur.addAbonne(this.server.getUtilisateur(personne));
+            this.server.getUtilisateur(personne).addAbonne(this.utilisateur);
             this.sendMessageFromServer("Vous suivez désormais " + personne + ".");
         } else if (commande.startsWith("/unfollow")) {
             String[] args = commande.split(" ");
             String personne = args[1];
-            this.utilisateur.removeAbonne(this.server.getUtilisateur(personne));
+            this.server.getUtilisateur(personne).removeAbonne(this.utilisateur);
             this.sendMessageFromServer("Vous ne suivez plus " + personne + ".");
         } else if (commande.startsWith("/quit")) {
             this.utilisateur.setConnecte(false);
+            this.utilisateur.setClient(null);
             this.client.close();
         } else if (commande.startsWith("/broadcast")) {
             String[] args = commande.split(" ");
@@ -113,7 +115,6 @@ public class ClientHandler implements Runnable {
                 msg += args[i] + " ";
             }
             this.server.broadcast(this.server.createMessage(msg, this.utilisateur));
-            this.server.broadcast(new Message(0, msg, utilisateur));
         } else if (commande.startsWith("/list")) {
             this.afficherUtilisateurs();
         } else {

@@ -11,6 +11,7 @@ public class Utilisateur {
     private String motDePasse;
     private List<Utilisateur> abonnes;
     private boolean connecte;
+    private ClientHandler client;
     private Map<Message, Boolean> messages;
 
     public Utilisateur(String pseudo, String motDePasse) {
@@ -19,6 +20,15 @@ public class Utilisateur {
         this.abonnes = new ArrayList<>();
         this.connecte = true;
         this.messages = new HashMap<>();
+        this.client = null;
+    }
+
+    public ClientHandler getClient() {
+        return this.client;
+    }
+
+    public void setClient(ClientHandler client) {
+        this.client = client;
     }
 
     public String getPseudo() {
@@ -65,6 +75,7 @@ public class Utilisateur {
         boolean lu = false;
         if (this.connecte) {lu = true;}
         this.messages.put(message, lu);
+        if (this.client != null) {this.client.sendMessage(message);}
     }
 
     public void removeMessage(Message message) {
