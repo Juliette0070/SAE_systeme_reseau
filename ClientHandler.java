@@ -35,6 +35,7 @@ public class ClientHandler implements Runnable {
             this.utilisateur.setConnecte(true);
             this.utilisateur.setClient(this);
             this.sendMessageFromServer("Bienvenue " + this.utilisateur.getPseudo() + " !");
+            this.afficherMessagesNonLus();
             while (this.utilisateur.isConnecte()) {
                 String message = reader.readLine();
                 if (message == null || message.equals("")) {
@@ -171,6 +172,13 @@ public class ClientHandler implements Runnable {
         Message msg = this.server.createMessage(message, this.server.getUtilisateurServer());
         this.server.addMessage(msg);
         this.writer.println(msg);
+    }
+
+    public void afficherMessagesNonLus() {
+        for (Message message : this.utilisateur.getMessagesNonLus()) {
+            this.sendMessage(message);
+            this.utilisateur.setLu(message);
+        }
     }
 
     @Override

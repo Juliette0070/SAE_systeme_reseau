@@ -33,6 +33,7 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Server running on port 4444");
         try {
             while(true) {
                 // System.out.println("Waiting for client...");

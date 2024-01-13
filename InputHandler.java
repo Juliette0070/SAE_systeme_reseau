@@ -19,6 +19,7 @@ public class InputHandler implements Runnable {
             while (true) {
                 String message = reader.readLine();
                 writer.println(message);
+                if (message.equals("/quit")) {break;}
             }
         } catch (Exception e) {
             e.printStackTrace();
