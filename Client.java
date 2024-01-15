@@ -2,6 +2,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 public class Client implements Runnable {
     
@@ -22,7 +27,6 @@ public class Client implements Runnable {
             InputHandler inputHandler = new InputHandler(this.clientSocket);
             Thread inputThread = new Thread(inputHandler);
             inputThread.start();
-
             String message;
             while ((message = reader.readLine()) != null) {
                 this.afficheMessage(message);
@@ -34,7 +38,22 @@ public class Client implements Runnable {
     }
 
     public void afficheMessage(String message) {
-        System.out.println(message);
+        // System.out.println(message);
+        // parsing du json
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
+        int id = jsonObject.get("id").getAsInt();
+        String contenu = jsonObject.get("contenu").getAsString();
+        String expediteur = jsonObject.get("expediteur").getAsString();
+        int likes = jsonObject.get("likes").getAsInt();
+        String dateString = jsonObject.get("date").getAsString();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        Date date = new Date();
+        try {date = dateFormat.parse(dateString);}
+        catch (ParseException e) {e.printStackTrace();}
+        // affichage
+        System.out.println("id:" + id + " | " + date + " | " + likes + " likes");
+        System.out.println(expediteur + ">" + contenu);
     }
 
     private void closeSocket() {

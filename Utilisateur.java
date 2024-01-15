@@ -18,7 +18,7 @@ public class Utilisateur {
         this.pseudo = pseudo;
         this.motDePasse = motDePasse;
         this.abonnes = new ArrayList<>();
-        this.connecte = true;
+        this.connecte = false;
         this.messages = new HashMap<>();
         this.client = null;
     }

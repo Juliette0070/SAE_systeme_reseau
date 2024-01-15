@@ -26,11 +26,7 @@ public class ClientHandler implements Runnable {
         try {
             this.reader = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
             while (this.utilisateur == null) {
-                try {
-                    this.recupererUtilisateur();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                try {this.recupererUtilisateur();}catch (IOException e) {e.printStackTrace();}
             }
             this.utilisateur.setConnecte(true);
             this.utilisateur.setClient(this);
@@ -38,14 +34,9 @@ public class ClientHandler implements Runnable {
             this.afficherMessagesNonLus();
             while (this.utilisateur.isConnecte()) {
                 String message = reader.readLine();
-                if (message == null || message.equals("")) {
-                    continue;
-                }
-                if (message.startsWith("/")) {
-                    this.handleCommande(message);
-                } else {
-                    this.server.sendToAbonnes(this.server.createMessage(message, this.utilisateur));
-                }
+                if (message == null || message.equals("")) {continue;}
+                if (message.startsWith("/")) {this.handleCommande(message);}
+                else {this.server.sendToAbonnes(this.server.createMessage(message, this.utilisateur));}
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,6 +109,20 @@ public class ClientHandler implements Runnable {
             this.server.broadcast(this.server.createMessage(msg, this.utilisateur));
         } else if (commande.startsWith("/list")) {
             this.afficherUtilisateurs();
+        }else if (commande.startsWith("like")) {
+            // liker
+        } else if (commande.startsWith("unlike")) {
+            // unliker
+        } else if (commande.startsWith("delete")) {
+            if (this.utilisateur.getPseudo().equals("Serveur")) {
+                // supprimer le message peut importe l'utilisateur
+            } else {
+                // supprimer le message s'il appartient à l'utilisateur
+            }
+        } else if (commande.startsWith("remove")) {
+            if (this.utilisateur.getPseudo().equals("Serveur")) {
+                // supprimer l'utilisateur
+            }
         } else {
             this.help();
         }

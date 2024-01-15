@@ -9,6 +9,7 @@ public class Message {
     private Utilisateur expediteur;
     private Date date;
     private Set<Utilisateur> likes;
+    private boolean supprime;
 
     public Message(int id, String contenu, Utilisateur expediteur) {
         this.id = id;
@@ -16,6 +17,7 @@ public class Message {
         this.expediteur = expediteur;
         this.date = new Date();
         this.likes = new HashSet<>();
+        this.supprime = false;
     }
 
     public int getId() {
@@ -66,12 +68,20 @@ public class Message {
         return this.likes.size();
     }
 
+    public boolean isSupprime() {
+        return this.supprime;
+    }
+
+    public void supprime(boolean supprime) {
+        this.supprime = supprime;
+    }
+
     @Override
     public String toString() {
         return "{\"id\":" + this.id +
                 ", \"contenu\":\"" + this.contenu + '"' +
                 ", \"expediteur\":\"" + this.expediteur + '"' +
-                ", \"date\":" + this.date +
+                ", \"date\":\"" + this.date + '"' +
                 ", \"likes\":" + this.likes.size() +
                 '}';
     }
