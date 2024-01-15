@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -47,7 +48,8 @@ public class Client implements Runnable {
         String expediteur = jsonObject.get("expediteur").getAsString();
         int likes = jsonObject.get("likes").getAsInt();
         String dateString = jsonObject.get("date").getAsString();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        // conversion date String en Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
         Date date = new Date();
         try {date = dateFormat.parse(dateString);}
         catch (ParseException e) {e.printStackTrace();}

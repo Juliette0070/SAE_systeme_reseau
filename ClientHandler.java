@@ -42,6 +42,8 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
             System.out.println(this.client.getInetAddress() + " encountered an error.");
         }
+        this.utilisateur.setConnecte(false);
+        this.utilisateur.setClient(null);
         System.out.println(this.client.getInetAddress() + " disconnected.");
     }
 
@@ -129,25 +131,27 @@ public class ClientHandler implements Runnable {
     }
 
     public void afficherUtilisateurs() {
-        String liste = "Utilisateurs connectés :";
+        String liste = "Utilisateurs connectés : ";
         for (Utilisateur client : this.server.getUtilisateurs()) {
             String personne = client.getPseudo();
-            if (client.equals(this.utilisateur)) {personne += " (vous)";}
-            else {
-                boolean vousSuit = false;
-                boolean suivi = false;
-                for (Utilisateur abonne : this.utilisateur.getAbonnes()) {
-                    if (abonne.equals(client)) {
-                        vousSuit = true;
-                        break;
-                    }
-                } if (client.getAbonnes().contains(this.utilisateur)) {suivi = true;}
-                if (vousSuit && suivi) {personne += " (amis)";}
-                else if (vousSuit) {personne += " (vous suit)";}
-                else if (suivi) {personne += " (suivi)";} 
+            if (!client.getPseudo().equals("Serveur")) {
+                if (client.equals(this.utilisateur)) {personne += " (vous)";}
+                else {
+                    boolean vousSuit = false;
+                    boolean suivi = false;
+                    for (Utilisateur abonne : this.utilisateur.getAbonnes()) {
+                        if (abonne.equals(client)) {
+                            vousSuit = true;
+                            break;
+                        }
+                    } if (client.getAbonnes().contains(this.utilisateur)) {suivi = true;}
+                    if (vousSuit && suivi) {personne += " (amis)";}
+                    else if (vousSuit) {personne += " (vous suit)";}
+                    else if (suivi) {personne += " (suivi)";} 
+                } liste += personne + ", ";
             }
-            liste += "\n" + personne;
-        } this.sendMessage(liste);
+        } if (liste.endsWith(", ")) {liste = liste.substring(0, liste.length() - 2);}
+        this.sendMessage(liste);
     }
 
     public void help() {
@@ -156,7 +160,10 @@ public class ClientHandler implements Runnable {
         aide += "/msg <name> <message> : envoie un message privé à <name>\n";
         aide += "/follow <name> : suit les messages de <name>\n";
         aide += "/unfollow <name> : ne suit plus les messages de <name>\n";
-        aide += "/broadcast <message> : envoie un message à tous les clients\n";
+        aide += "/like <id_message> : like le message dont l'id est <id_message> --A VENIR--\n";
+        aide += "/unlike <id_message> : enlève le like sur le message dont l'id est <id_message> (si liké) --A VENIR--\n";
+        aide += "/delete <id_message> : supprime le message dont l'id est <id_message> (si c'est vous qui l'avez posté) --A VENIR--\n";
+        aide += "/broadcast <message> : envoie un message à tous les utilisateurs\n";
         aide += "/list : affiche les utilisateurs connectés\n";
         aide += "/quit : quitte le serveur\n";
         aide += "/help : affiche les commandes";

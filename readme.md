@@ -17,3 +17,9 @@ javac -d bin -cp ".;lib/gson-2.10.1.jar" *.java
 java -cp .:bin:lib/gson-2.10.1.jar Server/Client
 
 java -cp ".;bin;lib/gson-2.10.1.jar" Server/Client
+
+#### reflexion
+
+modifier les messages (côté cient ?) pour que ceux du serveur et de soi-même ne soit pas affichés pareil
+ajouter type dans le json pour broadcast, personnel, normal(abonnés)(par défaut)
+faire passer l'utilisateur qui envoie les réponse de soi-même à Serveur ?
