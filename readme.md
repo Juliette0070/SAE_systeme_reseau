@@ -14,9 +14,11 @@ javac -d bin -cp ".;lib/gson-2.10.1.jar" *.java
 
 ### commande pour executer
 
-java -cp .:bin:lib/gson-2.10.1.jar Server/Client
+java -cp .:bin:lib/gson-2.10.1.jar Server
+java -cp .:bin:lib/gson-2.10.1.jar Client
 
-java -cp ".;bin;lib/gson-2.10.1.jar" Server/Client
+java -cp ".;bin;lib/gson-2.10.1.jar" Server
+java -cp ".;bin;lib/gson-2.10.1.jar" Client
 
 #### infos
 

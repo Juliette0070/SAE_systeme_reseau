@@ -10,6 +10,7 @@ public class Utilisateur {
     private String pseudo;
     private String motDePasse;
     private List<Utilisateur> abonnes;
+    private List<Utilisateur> abonnements;
     private boolean connecte;
     private ClientHandler client;
     private Map<Message, Boolean> messages;
@@ -18,6 +19,7 @@ public class Utilisateur {
         this.pseudo = pseudo;
         this.motDePasse = motDePasse;
         this.abonnes = new ArrayList<>();
+        this.abonnements = new ArrayList<>();
         this.connecte = false;
         this.messages = new HashMap<>();
         this.client = null;
@@ -57,6 +59,18 @@ public class Utilisateur {
 
     public void removeAbonne(Utilisateur utilisateur) {
         this.abonnes.remove(utilisateur);
+    }
+
+    public List<Utilisateur> getAbonnements() {
+        return this.abonnements;
+    }
+
+    public void addAbonnement(Utilisateur utilisateur) {
+        this.abonnements.add(utilisateur);
+    }
+
+    public void removeAbonnement(Utilisateur utilisateur) {
+        this.abonnements.remove(utilisateur);
     }
 
     public boolean isConnecte() {

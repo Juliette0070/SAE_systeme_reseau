@@ -91,13 +91,43 @@ public class ClientHandler implements Runnable {
         } else if (commande.startsWith("/follow")) {
             String[] args = commande.split(" ");
             String personne = args[1];
-            this.server.getUtilisateur(personne).addAbonne(this.utilisateur);
-            this.sendMessageFromServer("Vous suivez désormais " + personne + ".");
+            Utilisateur user = this.server.getUtilisateur(personne);
+            if (user != null) {
+                user.addAbonne(this.utilisateur);
+                this.utilisateur.addAbonnement(user);
+                this.sendMessageFromServer("Vous suivez désormais " + personne + ".");
+            } else {
+                this.sendMessageFromServer("L'utilisateur " + personne + " n'existe pas.");
+            }
         } else if (commande.startsWith("/unfollow")) {
             String[] args = commande.split(" ");
             String personne = args[1];
-            this.server.getUtilisateur(personne).removeAbonne(this.utilisateur);
-            this.sendMessageFromServer("Vous ne suivez plus " + personne + ".");
+            Utilisateur user = this.server.getUtilisateur(personne);
+            if (user != null && this.utilisateur.getAbonnements().contains(user)) {
+                user.removeAbonne(this.utilisateur);
+                this.utilisateur.removeAbonnement(user);
+                this.sendMessageFromServer("Vous ne suivez plus " + personne + ".");
+            } else {
+                this.sendMessageFromServer("L'utilisateur " + personne + " n'existe pas ou n'est pas dans votre liste d'abonnements");
+            }
+        } else if (commande.startsWith("/abonnes")) {
+            String[] args = commande.split(" ");
+            Integer nbFollowers = this.utilisateur.getAbonnes().size();
+            this.sendMessageFromServer("Vous avez " + nbFollowers + " abonnés.");
+            if (nbFollowers > 0) {
+                for (Utilisateur user : this.utilisateur.getAbonnes()) {
+                    this.sendMessageFromServer(user.getPseudo());
+                }
+            }
+        } else if (commande.startsWith("/suivi")) {
+            String[] args = commande.split(" ");
+            Integer nbSuivis = this.utilisateur.getAbonnements().size();
+            this.sendMessageFromServer("Vous avez " + nbSuivis + " abonnements.");
+            if (nbSuivis > 0) {
+                for (Utilisateur user : this.utilisateur.getAbonnements()) {
+                    this.sendMessageFromServer(user.getPseudo());
+                }
+            }
         } else if (commande.startsWith("/quit")) {
             this.utilisateur.setConnecte(false);
             this.utilisateur.setClient(null);
