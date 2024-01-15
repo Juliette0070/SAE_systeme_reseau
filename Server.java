@@ -7,14 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/*
- * à faire:
- * vérifier si l'utilisateur existe déjà
- * - si oui, vérifier si le mot de passe est correct et qu'il n'est pas déjà connecté
- * - si non, créer l'utilisateur
- * ajuster les autres méthodes en conséquence
- */
-
 public class Server implements Runnable {
     
     private ServerSocket serverSocket;
