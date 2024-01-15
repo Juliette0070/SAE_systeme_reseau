@@ -47,13 +47,14 @@ public class Client implements Runnable {
         String contenu = jsonObject.get("contenu").getAsString();
         String expediteur = jsonObject.get("expediteur").getAsString();
         int likes = jsonObject.get("likes").getAsInt();
+        int type = jsonObject.get("type").getAsInt();
         String dateString = jsonObject.get("date").getAsString();
         // conversion date String en Date
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
         Date date = new Date();
         try {date = dateFormat.parse(dateString);}
         catch (ParseException e) {e.printStackTrace();}
-        // affichage
+        // affichage en fonction du type (--A VENIR--)
         System.out.println("id:" + id + " | " + date + " | " + likes + " likes");
         System.out.println(expediteur + ">" + contenu);
     }

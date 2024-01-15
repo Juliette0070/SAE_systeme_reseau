@@ -10,14 +10,16 @@ public class Message {
     private Date date;
     private Set<Utilisateur> likes;
     private boolean supprime;
+    private int type;
 
-    public Message(int id, String contenu, Utilisateur expediteur) {
+    public Message(int id, String contenu, Utilisateur expediteur, int type) {
         this.id = id;
         this.contenu = contenu;
         this.expediteur = expediteur;
         this.date = new Date();
         this.likes = new HashSet<>();
         this.supprime = false;
+        this.type = type;
     }
 
     public int getId() {
@@ -76,6 +78,14 @@ public class Message {
         this.supprime = supprime;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "{\"id\":" + this.id +
@@ -83,6 +93,7 @@ public class Message {
                 ", \"expediteur\":\"" + this.expediteur + '"' +
                 ", \"date\":\"" + this.date + '"' +
                 ", \"likes\":" + this.likes.size() +
+                ", \"type\":" + this.type +
                 '}';
     }
 }

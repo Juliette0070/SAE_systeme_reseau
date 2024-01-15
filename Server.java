@@ -83,9 +83,9 @@ public class Server implements Runnable {
         } this.messages.add(message);
     }
 
-    public Message createMessage(String contenu, Utilisateur expediteur) {
+    public Message createMessage(String contenu, Utilisateur expediteur, int type) {
         int id = this.messages.size();
-        Message message = new Message(id, contenu, expediteur);
+        Message message = new Message(id, contenu, expediteur, type);
         return message;
     }
 

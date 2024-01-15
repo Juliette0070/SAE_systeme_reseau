@@ -36,7 +36,7 @@ public class ClientHandler implements Runnable {
                 String message = reader.readLine();
                 if (message == null || message.equals("")) {continue;}
                 if (message.startsWith("/")) {this.handleCommande(message);}
-                else {this.server.sendToAbonnes(this.server.createMessage(message, this.utilisateur));}
+                else {this.server.sendToAbonnes(this.server.createMessage(message, this.utilisateur, 0));}
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,7 +87,7 @@ public class ClientHandler implements Runnable {
             String personne = args[1];
             String msg = "";
             for (int i = 2; i < args.length; i++) {msg += args[i] + " ";}
-            this.server.sendTo(personne, this.server.createMessage(msg, this.utilisateur));
+            this.server.sendTo(personne, this.server.createMessage(msg, this.utilisateur, 2));
         } else if (commande.startsWith("/follow")) {
             String[] args = commande.split(" ");
             String personne = args[1];
@@ -108,7 +108,7 @@ public class ClientHandler implements Runnable {
             for (int i = 1; i < args.length; i++) {
                 msg += args[i] + " ";
             }
-            this.server.broadcast(this.server.createMessage(msg, this.utilisateur));
+            this.server.broadcast(this.server.createMessage(msg, this.utilisateur, 1));
         } else if (commande.startsWith("/list")) {
             this.afficherUtilisateurs();
         }else if (commande.startsWith("like")) {
@@ -175,13 +175,13 @@ public class ClientHandler implements Runnable {
     }
 
     public void sendMessage(String message) {
-        Message msg = this.server.createMessage(message, this.utilisateur);
+        Message msg = this.server.createMessage(message, this.utilisateur, 3);
         this.server.addMessage(msg);
         this.writer.println(msg);
     }
 
     public void sendMessageFromServer(String message) {
-        Message msg = this.server.createMessage(message, this.server.getUtilisateurServer());
+        Message msg = this.server.createMessage(message, this.server.getUtilisateurServer(), 3);
         this.server.addMessage(msg);
         this.writer.println(msg);
     }
