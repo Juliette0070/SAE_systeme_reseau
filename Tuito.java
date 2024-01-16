@@ -1,3 +1,5 @@
+import java.io.PrintWriter;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -14,6 +16,8 @@ public class Tuito extends Application {
 
     private Stage primaryStage;
     private Client client;
+    private PrintWriter writer;
+    
 
     private TextArea zoneChat = new TextArea();
 
@@ -27,6 +31,7 @@ public class Tuito extends Application {
         this.primaryStage.setTitle("Application de Chat JavaFX");
         try {
             this.client = new Client();
+            this.writer = new PrintWriter(client.getClientSocket().getOutputStream(), true);
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -95,8 +100,8 @@ public class Tuito extends Application {
 
     private void envoyerMessage(String expediteur, String message) {
 
-        
         String nouveauMessage = expediteur + ": " + message + "\n";
         this.zoneChat.appendText(nouveauMessage);
+        this.writer.println(nouveauMessage);
     }
 }
