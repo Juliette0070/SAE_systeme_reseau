@@ -8,6 +8,7 @@
             "type": "java",
             "name": "Tuito",
             "request": "launch",
+            "vmArgs": "--module-path c:\\Users\\Utilisateur\\Desktop\\TéléchargementBis\\openjfx\\javafx-sdk-20.0.1\\lib\\ --add-modules javafx.controls,javafx.fxml",
             "mainClass": "Tuito",
             "projectName": "SAE_systeme_reseau_204e919b"
         },
