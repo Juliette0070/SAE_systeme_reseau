@@ -38,6 +38,10 @@ public class Client implements Runnable {
         }
     }
 
+    public Socket getClientSocket() {
+        return this.clientSocket;
+    }
+
     public void afficheMessage(String message) {
         // System.out.println(message);
         // parsing du json

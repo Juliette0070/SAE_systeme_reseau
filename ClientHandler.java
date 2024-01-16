@@ -111,6 +111,7 @@ public class ClientHandler implements Runnable {
                 this.sendMessageFromServer("L'utilisateur " + personne + " n'existe pas ou n'est pas dans votre liste d'abonnements");
             }
         } else if (commande.startsWith("/abonnes")) {
+            System.out.println("Abonnnes");
             String[] args = commande.split(" ");
             Integer nbFollowers = this.utilisateur.getAbonnes().size();
             this.sendMessageFromServer("Vous avez " + nbFollowers + " abonnés.");

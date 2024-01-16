@@ -94,6 +94,8 @@ public class Tuito extends Application {
     }
 
     private void envoyerMessage(String expediteur, String message) {
+
+        
         String nouveauMessage = expediteur + ": " + message + "\n";
         this.zoneChat.appendText(nouveauMessage);
     }
