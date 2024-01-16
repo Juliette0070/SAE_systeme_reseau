@@ -8,6 +8,13 @@
             "type": "java",
             "name": "Tuito",
             "request": "launch",
+            "mainClass": "Tuito",
+            "projectName": "SAE_systeme_reseau_204e919b"
+        },
+        {
+            "type": "java",
+            "name": "Tuito",
+            "request": "launch",
             "vmArgs": "--module-path /usr/share/openjfx/lib/ --add-modules javafx.controls,javafx.fxml",
             "mainClass": "Tuito",
             "projectName": "SAE_systeme_reseau-1_76934e3a"
