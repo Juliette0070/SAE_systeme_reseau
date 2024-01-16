@@ -24,6 +24,7 @@ public class Server implements Runnable {
     @Override
     public void run() {
         System.out.println("Server running on port 4444");
+        System.out.println("En attente de connexions...");
         try {
             while(true) {
                 ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),this);

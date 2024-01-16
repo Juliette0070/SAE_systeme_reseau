@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class Tuito extends Application {
 
     private Stage primaryStage;
-    private Client clientHandler;
+    private Client client;
 
     private TextArea zoneChat = new TextArea();
 
@@ -26,11 +26,10 @@ public class Tuito extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Application de Chat JavaFX");
         try {
-            this.clientHandler = new Client();
+            this.client = new Client();
         } catch(Exception e) {
             e.printStackTrace();
         }
-
 
         fenetreConnexion();
     }
@@ -48,10 +47,10 @@ public class Tuito extends Application {
         Button btnConnect = new Button("Se connecter");
 
         // Détection de connexion
-        btnConnect.setOnAction(e -> fenetreSalon(userLabel.getText()));
+        btnConnect.setOnAction(e -> fenetreSalon(userTF.getText()));
         root.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                fenetreSalon(userLabel.getText());
+                fenetreSalon(userTF.getText());
             }
         });
 
@@ -72,19 +71,21 @@ public class Tuito extends Application {
         champMessage.setPromptText("Écrire un message...");
         champMessage.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                // Vérifier le contenu du champ (si vide)
-                envoyerMessage(nomUtilisateur, champMessage.getText());
-                champMessage.clear();
+                if (champMessage.getText().length() > 0) {
+                    envoyerMessage(nomUtilisateur, champMessage.getText());
+                    champMessage.clear();
+                }
             }
         });
 
         Button boutonEnvoyer = new Button("Envoyer");
         boutonEnvoyer.setOnAction(e -> {
-            envoyerMessage(nomUtilisateur, champMessage.getText());
-            champMessage.clear();
+            if (champMessage.getText().length() > 0) {
+                envoyerMessage(nomUtilisateur, champMessage.getText());
+                champMessage.clear();
+            }
         });
 
-        // Placer les composants dans la racine
         VBox root = new VBox(10);
         root.getChildren().addAll(zoneChat, champMessage, boutonEnvoyer);
 
