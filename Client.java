@@ -14,12 +14,21 @@ public class Client implements Runnable {
     private Socket clientSocket;
     private BufferedReader reader;
     private PrintWriter writer;
+    private Tuito appli;
 
     public Client() throws Exception {
         this.clientSocket = new Socket("localhost", 4444); // Pour se connecter en local
         // this.clientSocket = new Socket("0.tcp.eu.ngrok.io", 17204); // Pour se connecter au i
         this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
+        this.appli = null;
+    }
+
+    public Client(Tuito appli) throws Exception {
+        this.clientSocket = new Socket("localhost", 4444);
+        this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
+        this.appli = appli;
     }
 
     @Override
@@ -42,7 +51,38 @@ public class Client implements Runnable {
         return this.clientSocket;
     }
 
+    public BufferedReader getReader() {
+        return this.reader;
+    }
+
     public void afficheMessage(String message) {
+        if (this.appli == null) {
+            this.afficheMessageTerminal(message);
+        } else {
+            this.afficheMessageInterface(message);
+        }
+    }
+
+    public void afficheMessageInterface(String message) {
+        // parsing du json
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
+        int id = jsonObject.get("id").getAsInt();
+        String contenu = jsonObject.get("contenu").getAsString();
+        String expediteur = jsonObject.get("expediteur").getAsString();
+        int likes = jsonObject.get("likes").getAsInt();
+        int type = jsonObject.get("type").getAsInt();
+        String dateString = jsonObject.get("date").getAsString();
+        // conversion date String en Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+        Date date = new Date();
+        try {date = dateFormat.parse(dateString);}
+        catch (ParseException e) {e.printStackTrace();}
+        // affichage en fonction du type
+        this.appli.handleMessage(id, date, likes, expediteur, contenu, type);
+    }
+
+    public void afficheMessageTerminal(String message) {
         // System.out.println(message);
         // parsing du json
         Gson gson = new Gson();
