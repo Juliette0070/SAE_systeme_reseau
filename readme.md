@@ -8,11 +8,14 @@
 
 ### commande pour compiler (linux puis windows)
 
-javac -d bin -cp .:lib/gson-2.10.1.jar *.java
-
+javac -d bin -cp .:lib/gson-2.10.1.jar --module-path /usr/share/openjfx/lib --add-modules javafx.controls *.java
 javac -d bin -cp ".;lib/gson-2.10.1.jar" *.java
 
 ### commande pour executer
+
+
+java -cp .:bin:lib/gson-2.10.1.jar --module-path /usr/share/openjfx/lib --add-modules javafx.controls Tuito
+java -cp .:bin:lib/gson-2.10.1.jar --module-path /usr/share/openjfx/lib --add-modules javafx.controls Client
 
 java -cp .:bin:lib/gson-2.10.1.jar Server
 java -cp .:bin:lib/gson-2.10.1.jar Client

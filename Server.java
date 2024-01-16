@@ -26,7 +26,6 @@ public class Server implements Runnable {
         System.out.println("Server running on port 4444");
         try {
             while(true) {
-                // System.out.println("Waiting for client...");
                 ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),this);
                 Thread clientThread = new Thread(clientHandler);
                 clientThread.start();
