@@ -34,7 +34,6 @@ public class ClientHandler implements Runnable {
             this.afficherMessagesNonLus();
             while (this.utilisateur.isConnecte()) {
                 String message = reader.readLine();
-                System.out.println(message);
                 if (message == null || message.equals("")) {continue;}
                 if (message.startsWith("/")) {this.handleCommande(message);}
                 else {this.server.sendToAbonnes(this.server.createMessage(message, this.utilisateur, 0));}
@@ -55,15 +54,12 @@ public class ClientHandler implements Runnable {
     public void recupererUtilisateur() throws IOException {
         this.sendMessageFromServer("Pseudo:");
         String pseudo = this.reader.readLine();
-        System.out.println(pseudo);
         this.sendMessageFromServer("Mot de passe:");
         String motDePasse = this.reader.readLine();
-        System.out.println(motDePasse);
         this.utilisateur = this.server.getUtilisateur(pseudo);
         if (this.utilisateur == null) {
             this.sendMessageFromServer("Cet utilisateur n'existe pas, voulez-vous le creer ? (o/n)");
             String reponse = this.reader.readLine();
-            System.out.println(reponse);
             if (reponse.equals("o") || reponse.equals("oui")) {
                 this.utilisateur = new Utilisateur(pseudo, motDePasse);
                 this.server.addUtilisateur(this.utilisateur);
@@ -115,7 +111,6 @@ public class ClientHandler implements Runnable {
                 this.sendMessageFromServer("L'utilisateur " + personne + " n'existe pas ou n'est pas dans votre liste d'abonnements");
             }
         } else if (commande.startsWith("/abonnes")) {
-            System.out.println("Abonnnes");
             String[] args = commande.split(" ");
             Integer nbFollowers = this.utilisateur.getAbonnes().size();
             this.sendMessageFromServer("Vous avez " + nbFollowers + " abonnes.");
@@ -207,21 +202,18 @@ public class ClientHandler implements Runnable {
 
     public void sendMessage(Message message) {
         this.writer.println(message);
-        System.out.println(message);
     }
 
     public void sendMessage(String message) {
         Message msg = this.server.createMessage(message, this.utilisateur, 3);
         this.server.addMessage(msg);
         this.writer.println(msg);
-        System.out.println(msg);
     }
 
     public void sendMessageFromServer(String message) {
         Message msg = this.server.createMessage(message, this.server.getUtilisateurServer(), 3);
         this.server.addMessage(msg);
         this.writer.println(msg);
-        System.out.println(msg);
     }
 
     public void afficherMessagesNonLus() {

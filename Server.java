@@ -56,11 +56,6 @@ public class Server implements Runnable {
         this.utilisateurs.add(utilisateur);
     }
 
-    public void test(Message message) {
-        System.out.println("ID:" + message.getId() + " | " + message.getDate() + " | " + message.getLikes().size() + "likes");
-        System.out.println(message.getExpediteur() + "> " + message.getContenu());
-    }
-
     public void broadcast(Message message) {
         for (Utilisateur utilisateur : this.utilisateurs) {
             if (!utilisateur.getPseudo().equals(message.getExpediteur().getPseudo())) {

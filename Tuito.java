@@ -33,6 +33,7 @@ public class Tuito extends Application {
         try {
             this.client = new Client(this);
             this.writer = new PrintWriter(client.getClientSocket().getOutputStream(), true);
+            this.client.start();
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -69,17 +70,19 @@ public class Tuito extends Application {
     }
 
     public void handleMessage(int id, Date date, int likes, String expediteur, String contenu, int type) {
-        this.zoneChat.appendText(contenu);
+        // gérer les différents types de messages (broadcast, privé, normal(abonnés), autre(Server))
+        this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
+        this.zoneChat.appendText(expediteur + ": " + contenu + "\n");
     }
 
     public void verifierConnexion(String nomUtilisateur, String motDePasse) {
-        this.writer.println(nomUtilisateur); System.out.println(nomUtilisateur);
-        this.writer.println(motDePasse); System.out.println(motDePasse);
+        this.writer.println(nomUtilisateur);
+        this.writer.println(motDePasse);
         // TODO
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Connexion");
         alert.setHeaderText(null);
-        alert.setContentText("Connexion réussie !");
+        alert.setContentText("Connexion reussie !");
         alert.showAndWait();
     }
 
@@ -88,9 +91,11 @@ public class Tuito extends Application {
 
         this.zoneChat.setEditable(false);
         this.zoneChat.setWrapText(true);
+        this.zoneChat.setPrefHeight(500);
+        this.zoneChat.setPrefWidth(700);
 
         TextField champMessage = new TextField();
-        champMessage.setPromptText("Écrire un message...");
+        champMessage.setPromptText("Ecrire un message...");
         champMessage.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 if (champMessage.getText().length() > 0) {
@@ -120,6 +125,6 @@ public class Tuito extends Application {
 
         String nouveauMessage = expediteur + ": " + message + "\n";
         this.zoneChat.appendText(nouveauMessage);
-        this.writer.println(message); System.out.println(message);
+        this.writer.println(message);
     }
 }

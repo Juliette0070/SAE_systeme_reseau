@@ -9,7 +9,7 @@ import java.util.Locale;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-public class Client implements Runnable {
+public class Client extends Thread {
     
     private Socket clientSocket;
     private BufferedReader reader;
