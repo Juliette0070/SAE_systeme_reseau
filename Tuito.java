@@ -1,6 +1,7 @@
 import java.io.PrintWriter;
 import java.util.Date;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -9,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
@@ -20,6 +22,7 @@ public class Tuito extends Application {
     private Client client;
     private PrintWriter writer;
     private TextArea zoneChat = new TextArea();
+    private int etat;
 
     public static void main(String[] args) {
         launch(args);
@@ -27,6 +30,7 @@ public class Tuito extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        this.etat = 0;
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Application de Chat JavaFX");
         try {
@@ -89,21 +93,24 @@ public class Tuito extends Application {
             this.zoneChat.appendText(expediteur + "->You> " + contenu + "\n");
         } else if (type.startsWith("3")) {
             // this.zoneChat.appendText("Message serveur\n");
-            this.zoneChat.appendText(expediteur + "> " + contenu + "\n");
             if (type.startsWith("30")) {
                 // this.zoneChat.appendText("Message de demande\n");
                 switch (type) {
                     case "300":
                         // action pour une demande de pseudo
+                        this.popUpDemande("Pseudo", "Entrez votre pseudo", contenu);
                         break;
                     case "301":
                         // action pour une demande de mot de passe
+                        this.popUpDemande("Mot de passe", "Entrez votre mot de passe", contenu);
                         break;
                     case "302":
                         // action pour une demande de création d'utilisateur
+                        this.popUpDemande("Creation de l'utilisateur", "Validation de la creation de l'utilisateur", contenu);
                         break;
                     default:
                         // action par défaut pour un message de demande
+                        this.popUpDemande("Message de demande", "Message de demande", contenu);
                         break;
                 }
             } else if (type.startsWith("31")) {
@@ -111,19 +118,28 @@ public class Tuito extends Application {
                 switch (type) {
                     case "310":
                         // action pour un utilisateur créé
+                        this.popUpInformation("Creation de l'utilisateur", null, contenu);
                         break;
                     case "311":
                         // action pour un utilisateur déjà connecté
+                        this.popUpInformation("Utilisateur déjà connecté", null, contenu);
                         break;
                     case "312":
                         // action pour un mot de passe incorrect
+                        this.popUpInformation("Mot de passe incorrect", null, contenu);
+                        break;
+                    case "313":
+                        // action pour bienvenue
+                        this.zoneChat.appendText(expediteur + "> " + contenu + "\n");
                         break;
                     default:
                         // action par défaut pour un message d'information
+                        this.popUpInformation("Message d'information", null, contenu);
                         break;
                 }
             } else if (type.startsWith("32")) {
                 // this.zoneChat.appendText("Message de retour\n");
+                this.zoneChat.appendText(expediteur + "> " + contenu + "\n");
                 switch (type) {
                     case "320":
                         // action pour la liste des utilisateurs
@@ -162,6 +178,28 @@ public class Tuito extends Application {
         alert.setContentText("Connexion reussie !");
         // TODO
         alert.showAndWait();
+    }
+
+    public void popUpDemande(String titre, String header, String message) {
+        Platform.runLater(() -> {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle(titre);
+            if (header != null) {dialog.setHeaderText(header);}
+            dialog.setContentText(message);
+            dialog.showAndWait().ifPresent(response -> {
+                this.writer.println(response);
+            });
+        });
+    }
+
+    public void popUpInformation(String titre, String header, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle(titre);
+            if (header != null) {alert.setHeaderText(header);}
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 
     private void fenetreSalon() {

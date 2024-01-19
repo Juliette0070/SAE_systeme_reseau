@@ -54,25 +54,25 @@ public class ClientHandler implements Runnable {
     }
 
     public void recupererUtilisateur() throws IOException {
-        this.sendMessageFromServer("Pseudo:", "301");
+        this.sendMessageFromServer("Pseudo:", "300");
         String pseudo = this.reader.readLine();
-        this.sendMessageFromServer("Mot de passe:", "302");
+        this.sendMessageFromServer("Mot de passe:", "301");
         String motDePasse = this.reader.readLine();
         this.utilisateur = this.server.getUtilisateur(pseudo);
         if (this.utilisateur == null) {
-            this.sendMessageFromServer("Cet utilisateur n'existe pas, voulez-vous le creer ? (o/n)", "303");
+            this.sendMessageFromServer("Cet utilisateur n'existe pas, voulez-vous le creer ? (o/n)", "302");
             String reponse = this.reader.readLine();
             if (reponse.equals("o") || reponse.equals("oui")) {
                 this.utilisateur = new Utilisateur(pseudo, motDePasse);
                 this.server.addUtilisateur(this.utilisateur);
-                this.sendMessageFromServer("Utilisateur cree !", "311");
+                this.sendMessageFromServer("Utilisateur cree !", "310");
             }
         } else if (this.utilisateur.isConnecte()) {
             this.utilisateur = null;
-            this.sendMessageFromServer("Cet utilisateur est deja connecte !", "312");
+            this.sendMessageFromServer("Cet utilisateur est deja connecte !", "311");
         } else if (!this.utilisateur.getMotDePasse().equals(motDePasse)) {
             this.utilisateur = null;
-            this.sendMessageFromServer("Mot de passe incorrect !", "313");
+            this.sendMessageFromServer("Mot de passe incorrect !", "312");
         }
     }
 

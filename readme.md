@@ -54,12 +54,17 @@ types de message (modifications possibles):
     - 323 : Liste des commandes (aide)
 - 4 : Message de retour (quand un client envoie un message, le serveur lui renvoie les infos du message (notamment l'id)) (à faire)
 
+etats de l'interface (modifications probables):
+
+- 0 : non connecté
+- 1 : connecté
+- 2 : en attente de réponse du serveur
+
 #### reflexion
 
-modifier les messages pour que ceux du serveur et de soi-même ne soit pas affichés pareil
-les messages supprimés restent dans la liste mais leur attribut "supprime" change
+les messages supprimés restent dans la liste mais leur attribut "supprime" change (ils ne doivent plus être affichés)
 
 penser à organiser les fonctions
-ajouter état de tuit'o ?
+ajouter état de tuit'o ? (ex: en train de se connecter, attente de réponse du serveur, etc)
 
-penser à changer l'utilisateur dans la zone de chat quand on change d'utilisateur ou qu'on se connecte
+penser à ajouter des synchronisations pour les listes (utilisateurs, abonnés, abonnements)
