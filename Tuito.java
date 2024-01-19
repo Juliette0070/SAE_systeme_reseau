@@ -71,21 +71,28 @@ public class Tuito extends Application {
 
     public void handleMessage(int id, Date date, int likes, String expediteur, String contenu, String type) {
         // gérer les différents types de messages (broadcast, privé, normal(abonnés), autre(Server))
-        this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
-        this.zoneChat.appendText(expediteur + ": " + contenu + "\n");
+        // this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
+        // this.zoneChat.appendText(expediteur + ": " + contenu + "\n");
         if (type.startsWith("0")) {
-            this.zoneChat.appendText("Message public\n");
             // action pour un message public
+            // this.zoneChat.appendText("Message public\n");
+            this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
+            this.zoneChat.appendText(expediteur + "> " + contenu + "\n");
         } else if (type.startsWith("1")) {
-            this.zoneChat.appendText("Message privé\n");
             // action pour un message privé
+            // this.zoneChat.appendText("Message privé\n");
+            this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
+            this.zoneChat.appendText(expediteur + "->All> " + contenu + "\n");
         } else if (type.startsWith("2")) {
-            this.zoneChat.appendText("Message abonnés\n");
             // action pour un message abonnés
+            // this.zoneChat.appendText("Message abonnés\n");
+            this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
+            this.zoneChat.appendText(expediteur + "->You> " + contenu + "\n");
         } else if (type.startsWith("3")) {
-            this.zoneChat.appendText("Message serveur\n");
+            // this.zoneChat.appendText("Message serveur\n");
+            this.zoneChat.appendText(expediteur + "> " + contenu + "\n");
             if (type.startsWith("30")) {
-                this.zoneChat.appendText("Message de demande\n");
+                // this.zoneChat.appendText("Message de demande\n");
                 switch (type) {
                     case "300":
                         // action pour une demande de pseudo
@@ -101,7 +108,7 @@ public class Tuito extends Application {
                         break;
                 }
             } else if (type.startsWith("31")) {
-                this.zoneChat.appendText("Message d'information\n");
+                // this.zoneChat.appendText("Message d'information\n");
                 switch (type) {
                     case "310":
                         // action pour un utilisateur créé
@@ -117,7 +124,7 @@ public class Tuito extends Application {
                         break;
                 }
             } else if (type.startsWith("32")) {
-                this.zoneChat.appendText("Message de retour\n");
+                // this.zoneChat.appendText("Message de retour\n");
                 switch (type) {
                     case "320":
                         // action pour la liste des utilisateurs
@@ -136,10 +143,13 @@ public class Tuito extends Application {
                 // action par défaut pour un message serveur
             }
         } else if (type.startsWith("4")) {
-            this.zoneChat.appendText("Message de retour utilisateur\n");
             // action pour un message de retour utilisateur
+            // this.zoneChat.appendText("Message de retour utilisateur\n");
+            // this.zoneChat.appendText(contenu + "\n"); // (ne plus afficher le message directement quand on l'envoie mais quand on le reçoit de la part du serveur)
         } else {
-            this.zoneChat.appendText("Message de type inconnu\n");
+            // this.zoneChat.appendText("Message de type inconnu\n");
+            this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
+            this.zoneChat.appendText(expediteur + ": " + contenu + "\n");
         }
     }
 

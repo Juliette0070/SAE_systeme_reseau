@@ -61,3 +61,5 @@ les messages supprimés restent dans la liste mais leur attribut "supprime" chan
 
 penser à organiser les fonctions
 ajouter état de tuit'o ?
+
+penser à changer l'utilisateur dans la zone de chat quand on change d'utilisateur ou qu'on se connecte
