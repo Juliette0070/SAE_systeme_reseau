@@ -36,9 +36,8 @@ public class ClientHandler implements Runnable {
                 if (message == null || message.equals("")) {continue;}
                 if (message.startsWith("/")) {this.handleCommande(message);}
                 else {
-                    Message msg = this.server.createMessage(message, this.utilisateur, "0");
-                    this.sendMessage(msg);
-                    this.server.sendToAbonnes(msg);
+                    this.sendMessage(this.server.createMessage(message, this.utilisateur, "4"));
+                    this.server.sendToAbonnes(this.server.createMessage(message, this.utilisateur, "0"));
                 }
             }
         } catch (Exception e) {
@@ -90,9 +89,8 @@ public class ClientHandler implements Runnable {
             String personne = args[1];
             String msg = "";
             for (int i = 2; i < args.length; i++) {msg += args[i] + " ";}
-            Message mess = this.server.createMessage(msg, this.utilisateur, "2");
-            this.sendMessage(mess);
-            this.server.sendTo(personne, mess);
+            this.sendMessage(this.server.createMessage(msg, this.utilisateur, "4"));
+            this.server.sendTo(personne, this.server.createMessage(msg, this.utilisateur, "2"));
         } else if (commande.startsWith("/follow")) {
             String[] args = commande.split(" ");
             String personne = args[1];
@@ -121,8 +119,8 @@ public class ClientHandler implements Runnable {
             if (nbFollowers > 0) {
                 String followers = "";
                 for (Utilisateur user : this.utilisateur.getAbonnes()) {
-                    followers += user.getPseudo() + ", ";
-                } if (followers.endsWith(", ")) {followers = followers.substring(0, followers.length() - 2);}
+                    followers += user.getPseudo() + ",";
+                } if (followers.endsWith(",")) {followers = followers.substring(0, followers.length() - 2);}
                 this.sendMessageFromServer(followers, "321");
             }
         } else if (commande.startsWith("/suivi")) {
@@ -131,8 +129,8 @@ public class ClientHandler implements Runnable {
             if (nbSuivis > 0) {
                 String abonnements = "";
                 for (Utilisateur user : this.utilisateur.getAbonnements()) {
-                    abonnements += user.getPseudo() + ", ";
-                } if (abonnements.endsWith(", ")) {abonnements = abonnements.substring(0, abonnements.length() - 2);}
+                    abonnements += user.getPseudo() + ",";
+                } if (abonnements.endsWith(",")) {abonnements = abonnements.substring(0, abonnements.length() - 2);}
                 this.sendMessageFromServer(abonnements, "322");
             }
         } else if (commande.startsWith("/quit")) {
@@ -145,9 +143,8 @@ public class ClientHandler implements Runnable {
             for (int i = 1; i < args.length; i++) {
                 msg += args[i] + " ";
             }
-            Message message = this.server.createMessage(msg, this.utilisateur, "1");
-            this.sendMessage(message);
-            this.server.broadcast(message);
+            this.sendMessage(this.server.createMessage(msg, this.utilisateur, "4"));
+            this.server.broadcast(this.server.createMessage(msg, this.utilisateur, "1"));
         } else if (commande.startsWith("/list")) {
             this.afficherUtilisateurs();
         }else if (commande.startsWith("like")) {
@@ -194,17 +191,17 @@ public class ClientHandler implements Runnable {
     }
 
     public void help() {
-        String aide = "Commandes disponibles :\n";
-        aide += "/name <name> : change le nom du client\n";
-        aide += "/msg <name> <message> : envoie un message prive à <name>\n";
-        aide += "/follow <name> : suit les messages de <name>\n";
-        aide += "/unfollow <name> : ne suit plus les messages de <name>\n";
-        aide += "/like <id_message> : like le message dont l'id est <id_message> --A VENIR--\n";
-        aide += "/unlike <id_message> : enleve le like sur le message dont l'id est <id_message> (si like) --A VENIR--\n";
-        aide += "/delete <id_message> : supprime le message dont l'id est <id_message> (si c'est vous qui l'avez poste) --A VENIR--\n";
-        aide += "/broadcast <message> : envoie un message à tous les utilisateurs\n";
-        aide += "/list : affiche les utilisateurs connectes\n";
-        aide += "/quit : quitte le serveur\n";
+        String aide = "";
+        aide += "/name <name> : change le nom du client,";
+        aide += "/msg <name> <message> : envoie un message prive a <name>,";
+        aide += "/follow <name> : suit les messages de <name>,";
+        aide += "/unfollow <name> : ne suit plus les messages de <name>,";
+        aide += "/like <id_message> : like le message dont l'id est <id_message> --A VENIR--,";
+        aide += "/unlike <id_message> : enleve le like sur le message dont l'id est <id_message> (si like) --A VENIR--,";
+        aide += "/delete <id_message> : supprime le message dont l'id est <id_message> (si c'est vous qui l'avez poste) --A VENIR--,";
+        aide += "/broadcast <message> : envoie un message a tous les utilisateurs,";
+        aide += "/list : affiche les utilisateurs connectes,";
+        aide += "/quit : quitte le serveur,";
         aide += "/help : affiche les commandes";
         this.sendMessageFromServer(aide, "323");
     }

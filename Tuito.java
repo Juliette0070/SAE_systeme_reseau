@@ -1,6 +1,5 @@
 import java.io.PrintWriter;
 import java.util.Date;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -39,7 +38,7 @@ public class Tuito extends Application {
         }
 
         // fenetreConnexion();
-        fenetreSalon("Test");
+        fenetreSalon();
     }
 
     private void fenetreConnexion() {
@@ -55,12 +54,12 @@ public class Tuito extends Application {
         Button btnConnect = new Button("Se connecter");
 
         // Détection de connexion
-        btnConnect.setOnAction(e -> fenetreSalon(userTF.getText()));
-        root.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) { // ici -> vérif réponse du serveur pour la connexion (avant appel à fenetreSalon)
-                fenetreSalon(userTF.getText());
-            }
-        });
+        // btnConnect.setOnAction(e -> fenetreSalon(userTF.getText())); // set le nom d'utilisateur
+        // root.setOnKeyPressed(event -> {
+        //     if (event.getCode() == KeyCode.ENTER) { // ici -> vérif réponse du serveur pour la connexion (avant appel à fenetreSalon)
+        //         fenetreSalon(userTF.getText());
+        //     }
+        // });
 
         root.getChildren().addAll(userLabel, userTF, passwordLabel, passwordPF, btnConnect);
 
@@ -79,7 +78,7 @@ public class Tuito extends Application {
             this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
             this.zoneChat.appendText(expediteur + "> " + contenu + "\n");
         } else if (type.startsWith("1")) {
-            // action pour un message privé
+            // action pour un message privés
             // this.zoneChat.appendText("Message privé\n");
             this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
             this.zoneChat.appendText(expediteur + "->All> " + contenu + "\n");
@@ -145,10 +144,10 @@ public class Tuito extends Application {
         } else if (type.startsWith("4")) {
             // action pour un message de retour utilisateur
             // this.zoneChat.appendText("Message de retour utilisateur\n");
-            // this.zoneChat.appendText(contenu + "\n"); // (ne plus afficher le message directement quand on l'envoie mais quand on le reçoit de la part du serveur)
+            this.zoneChat.appendText("id:" + id + " | " + contenu + "\n"); // (ne plus afficher le message directement quand on l'envoie mais quand on le reçoit de la part du serveur)
         } else {
             // this.zoneChat.appendText("Message de type inconnu\n");
-            this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
+            this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes | type:" + type + "\n");
             this.zoneChat.appendText(expediteur + ": " + contenu + "\n");
         }
     }
@@ -165,8 +164,8 @@ public class Tuito extends Application {
         alert.showAndWait();
     }
 
-    private void fenetreSalon(String nomUtilisateur) {
-        this.primaryStage.setTitle("Salon de Discussion - " + nomUtilisateur);
+    private void fenetreSalon() {
+        this.primaryStage.setTitle("Salon de Discussion");
 
         this.zoneChat.setEditable(false);
         this.zoneChat.setWrapText(true);
@@ -178,7 +177,7 @@ public class Tuito extends Application {
         champMessage.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 if (champMessage.getText().length() > 0) {
-                    envoyerMessage(nomUtilisateur, champMessage.getText());
+                    envoyerMessage(champMessage.getText());
                     champMessage.clear();
                 }
             }
@@ -187,7 +186,7 @@ public class Tuito extends Application {
         Button boutonEnvoyer = new Button("Envoyer");
         boutonEnvoyer.setOnAction(e -> {
             if (champMessage.getText().length() > 0) {
-                envoyerMessage(nomUtilisateur, champMessage.getText());
+                envoyerMessage(champMessage.getText());
                 champMessage.clear();
             }
         });
@@ -200,10 +199,9 @@ public class Tuito extends Application {
         this.primaryStage.show();
     }
 
-    private void envoyerMessage(String expediteur, String message) {
-
-        String nouveauMessage = expediteur + ": " + message + "\n";
-        this.zoneChat.appendText(nouveauMessage);
+    private void envoyerMessage(String message) {
+        // String nouveauMessage = "You> " + message + "\n";
+        // this.zoneChat.appendText(nouveauMessage);
         this.writer.println(message);
     }
 }
