@@ -69,20 +69,89 @@ public class Tuito extends Application {
         this.primaryStage.show();
     }
 
-    public void handleMessage(int id, Date date, int likes, String expediteur, String contenu, int type) {
+    public void handleMessage(int id, Date date, int likes, String expediteur, String contenu, String type) {
         // gérer les différents types de messages (broadcast, privé, normal(abonnés), autre(Server))
         this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
         this.zoneChat.appendText(expediteur + ": " + contenu + "\n");
+        if (type.startsWith("0")) {
+            this.zoneChat.appendText("Message public\n");
+            // action pour un message public
+        } else if (type.startsWith("1")) {
+            this.zoneChat.appendText("Message privé\n");
+            // action pour un message privé
+        } else if (type.startsWith("2")) {
+            this.zoneChat.appendText("Message abonnés\n");
+            // action pour un message abonnés
+        } else if (type.startsWith("3")) {
+            this.zoneChat.appendText("Message serveur\n");
+            if (type.startsWith("30")) {
+                this.zoneChat.appendText("Message de demande\n");
+                switch (type) {
+                    case "300":
+                        // action pour une demande de pseudo
+                        break;
+                    case "301":
+                        // action pour une demande de mot de passe
+                        break;
+                    case "302":
+                        // action pour une demande de création d'utilisateur
+                        break;
+                    default:
+                        // action par défaut pour un message de demande
+                        break;
+                }
+            } else if (type.startsWith("31")) {
+                this.zoneChat.appendText("Message d'information\n");
+                switch (type) {
+                    case "310":
+                        // action pour un utilisateur créé
+                        break;
+                    case "311":
+                        // action pour un utilisateur déjà connecté
+                        break;
+                    case "312":
+                        // action pour un mot de passe incorrect
+                        break;
+                    default:
+                        // action par défaut pour un message d'information
+                        break;
+                }
+            } else if (type.startsWith("32")) {
+                this.zoneChat.appendText("Message de retour\n");
+                switch (type) {
+                    case "320":
+                        // action pour la liste des utilisateurs
+                        break;
+                    case "321":
+                        // action pour la liste des abonnes
+                        break;
+                    case "322":
+                        // action pour la liste des abonnements
+                        break;
+                    default:
+                        // action par défaut pour un message de retour
+                        break;
+                }
+            } else {
+                // action par défaut pour un message serveur
+            }
+        } else if (type.startsWith("4")) {
+            this.zoneChat.appendText("Message de retour utilisateur\n");
+            // action pour un message de retour utilisateur
+        } else {
+            this.zoneChat.appendText("Message de type inconnu\n");
+        }
     }
 
     public void verifierConnexion(String nomUtilisateur, String motDePasse) {
+        // TODO
         this.writer.println(nomUtilisateur);
         this.writer.println(motDePasse);
-        // TODO
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Connexion");
         alert.setHeaderText(null);
         alert.setContentText("Connexion reussie !");
+        // TODO
         alert.showAndWait();
     }
 

@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +7,6 @@ import java.util.Set;
 public class Server implements Runnable {
     
     private ServerSocket serverSocket;
-    private BufferedReader reader;
     private List<Message> messages;
     private Set<Utilisateur> utilisateurs;
 
@@ -36,8 +32,6 @@ public class Server implements Runnable {
             e.printStackTrace();
         }
     }
-
-    // Tests
 
     public Utilisateur getUtilisateurServer() {
         return this.getUtilisateur("Serveur");
@@ -78,7 +72,7 @@ public class Server implements Runnable {
         } this.messages.add(message);
     }
 
-    public Message createMessage(String contenu, Utilisateur expediteur, int type) {
+    public Message createMessage(String contenu, Utilisateur expediteur, String type) {
         int id = this.messages.size();
         Message message = new Message(id, contenu, expediteur, type);
         return message;

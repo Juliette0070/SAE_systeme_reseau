@@ -71,7 +71,7 @@ public class Client extends Thread {
         String contenu = jsonObject.get("contenu").getAsString();
         String expediteur = jsonObject.get("expediteur").getAsString();
         int likes = jsonObject.get("likes").getAsInt();
-        int type = jsonObject.get("type").getAsInt();
+        String type = jsonObject.get("type").getAsString();
         String dateString = jsonObject.get("date").getAsString();
         // conversion date String en Date
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);

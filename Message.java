@@ -10,9 +10,9 @@ public class Message {
     private Date date;
     private Set<Utilisateur> likes;
     private boolean supprime;
-    private int type;
+    private String type;
 
-    public Message(int id, String contenu, Utilisateur expediteur, int type) {
+    public Message(int id, String contenu, Utilisateur expediteur, String type) {
         this.id = id;
         this.contenu = contenu;
         this.expediteur = expediteur;
@@ -78,11 +78,11 @@ public class Message {
         this.supprime = supprime;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
