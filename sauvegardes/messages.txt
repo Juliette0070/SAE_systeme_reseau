@@ -1,0 +1,24 @@
+0;Pseudo:;0;Sat Jan 20 16:50:56 CET 2024;-1;false;300
+1;Mot de passe:;0;Sat Jan 20 16:51:03 CET 2024;-1;false;301
+2;Cet utilisateur n'existe pas, voulez-vous le creer ? (o/n);0;Sat Jan 20 16:51:10 CET 2024;-1;false;302
+3;Utilisateur cree !;0;Sat Jan 20 16:51:19 CET 2024;-1;false;310
+4;Bienvenue j !;0;Sat Jan 20 16:51:19 CET 2024;-1;false;313
+5;bonjour;1;Sat Jan 20 16:51:29 CET 2024;-1;false;0
+6;c'est moi jean g�rard;1;Sat Jan 20 16:51:38 CET 2024;-1;false;0
+7;Pseudo:;0;Sat Jan 20 16:51:44 CET 2024;-1;false;300
+8;Mot de passe:;0;Sat Jan 20 16:51:48 CET 2024;-1;false;301
+9;Cet utilisateur n'existe pas, voulez-vous le creer ? (o/n);0;Sat Jan 20 16:51:49 CET 2024;-1;false;302
+10;Utilisateur cree !;0;Sat Jan 20 16:51:50 CET 2024;-1;false;310
+11;Bienvenue t !;0;Sat Jan 20 16:51:50 CET 2024;-1;false;313
+12;hfs;2;Sat Jan 20 16:52:12 CET 2024;-1;false;0
+13;Vous suivez desormais j.;0;Sat Jan 20 16:52:16 CET 2024;-1;false;315
+14;hsifhsd;1;Sat Jan 20 16:52:23 CET 2024;-1;false;0
+15;Pseudo:;0;Sat Jan 20 16:52:49 CET 2024;-1;false;300
+16;Mot de passe:;0;Sat Jan 20 16:52:53 CET 2024;-1;false;301
+17;Bienvenue Serveur !;0;Sat Jan 20 16:52:55 CET 2024;-1;false;313
+18;j, t;0;Sat Jan 20 16:53:01 CET 2024;-1;false;320
+19;j, t;0;Sat Jan 20 16:53:03 CET 2024;-1;false;320
+20;j, t;0;Sat Jan 20 16:53:04 CET 2024;-1;false;320
+21;j, t;0;Sat Jan 20 16:53:04 CET 2024;-1;false;320
+22;j, t;0;Sat Jan 20 16:53:04 CET 2024;-1;false;320
+23;j, t;0;Sat Jan 20 16:53:10 CET 2024;-1;false;320

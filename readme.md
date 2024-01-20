@@ -47,6 +47,7 @@ types de message (modifications possibles):
     - 316 : X n'existe pas
     - 317 : Vous ne suivez plus X
     - 318 : Vous ne suivez pas X ou X n'existe pas
+    - 319 : l'id doit être un entier
   - 32 : Retour
     - 320 : Liste des utilisateurs
     - 321 : Liste des abonnés
