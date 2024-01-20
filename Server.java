@@ -110,6 +110,25 @@ public class Server implements Runnable {
         this.utilisateurs.remove(clientHandler.getUtilisateur());
     }
 
+    public Message getMessage(int id) {
+        for (Message message : this.messages) {
+            if (message.getId() == id) {
+                return message;
+            }
+        } return null;
+    }
+
+    public void removeUtilisateur(Utilisateur utilisateur) {
+        this.utilisateurs.remove(utilisateur);
+    }
+
+    public int getIdUtilisateur() {
+        int id = this.utilisateurs.size();
+        while (this.getUtilisateur(id) != null) {
+            id++;
+        } return id;
+    }
+
     // Sauvegarde
 
     public void sauvegarder() {
@@ -229,6 +248,7 @@ public class Server implements Runnable {
             for (Utilisateur utilisateur : setUtilisateurs) {
                 if (utilisateur.getPseudo().equals(message.getExpediteur().getPseudo())) {
                     utilisateur.addMessage(message);
+                    utilisateur.setLu(message);
                 }
             }
         }
@@ -236,6 +256,7 @@ public class Server implements Runnable {
         this.utilisateurs = setUtilisateurs;
         // ajout des messages au serveur
         this.messages = listeMessages;
+        // ajouter le Serveur s'il n'existe pas
         if (this.utilisateurs.size() == 0) {
             this.utilisateurs.add(new Utilisateur(0, "Serveur", "admin"));
         }

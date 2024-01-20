@@ -63,7 +63,7 @@ public class ClientHandler implements Runnable {
             this.sendMessageFromServer("Cet utilisateur n'existe pas, voulez-vous le creer ? (o/n)", "302");
             String reponse = this.reader.readLine();
             if (reponse.equals("o") || reponse.equals("oui")) {
-                this.utilisateur = new Utilisateur(this.server.getUtilisateurs().size(), pseudo, motDePasse);
+                this.utilisateur = new Utilisateur(this.server.getIdUtilisateur(), pseudo, motDePasse);
                 this.server.addUtilisateur(this.utilisateur);
                 this.sendMessageFromServer("Utilisateur cree !", "310");
             }
@@ -146,18 +146,65 @@ public class ClientHandler implements Runnable {
         } else if (commande.startsWith("/list")) {
             this.afficherUtilisateurs();
         }else if (commande.startsWith("/like")) {
-            // liker
+            String[] args = commande.split(" ");
+            String idString = args[1];
+            try {
+                int id = Integer.parseInt(idString);
+                Message message = this.server.getMessage(id);
+                message.addLike(this.utilisateur);
+            }
+            catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
         } else if (commande.startsWith("/unlike")) {
-            // unliker
+            String[] args = commande.split(" ");
+            String idString = args[1];
+            try {
+                int id = Integer.parseInt(idString);
+                Message message = this.server.getMessage(id);
+                message.removeLike(this.utilisateur);
+            }
+            catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
         } else if (commande.startsWith("/delete")) {
             if (this.utilisateur.getPseudo().equals("Serveur")) {
-                // supprimer le message peut importe l'utilisateur
+                String[] args = commande.split(" ");
+                String idString = args[1];
+                try {
+                    int id = Integer.parseInt(idString);
+                    Message message = this.server.getMessage(id);
+                    message.supprime(true);
+                    for (Utilisateur uti : this.server.getUtilisateurs()) {
+                        uti.removeMessage(message);
+                    }
+                }
+                catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
             } else {
                 // supprimer le message s'il appartient à l'utilisateur
+                String[] args = commande.split(" ");
+                String idString = args[1];
+                try {
+                    int id = Integer.parseInt(idString);
+                    Message message = this.server.getMessage(id);
+                    if (message.getExpediteur().equals(this.utilisateur)) {
+                        this.sendMessageFromServer("Vous n'etes pas la personne a l'origine de ce message", "31");
+                        return;
+                    }
+                    message.supprime(true);
+                    for (Utilisateur uti : this.server.getUtilisateurs()) {
+                        uti.removeMessage(message);
+                    }
+                }
+                catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
             }
         } else if (commande.startsWith("/remove")) {
             if (this.utilisateur.getPseudo().equals("Serveur")) {
                 // supprimer l'utilisateur
+                String[] args = commande.split(" ");
+                String idString = args[1];
+                try {
+                    int id = Integer.parseInt(idString);
+                    Utilisateur utilisateur = this.server.getUtilisateur(id);
+                    this.server.removeUtilisateur(utilisateur);
+                }
+                catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
             }
         } else if (commande.startsWith("/save")) {
             if (this.utilisateur.getPseudo().equals("Serveur")) {
