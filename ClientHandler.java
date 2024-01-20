@@ -157,7 +157,7 @@ public class ClientHandler implements Runnable {
             } else {
                 // supprimer le message s'il appartient à l'utilisateur
             }
-        } else if (commande.startsWith("remove")) {
+        } else if (commande.startsWith("remocaseve")) {
             if (this.utilisateur.getPseudo().equals("Serveur")) {
                 // supprimer l'utilisateur
             }

@@ -13,6 +13,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -77,18 +79,18 @@ public class Tuito extends Application {
         // this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
         // this.zoneChat.appendText(expediteur + ": " + contenu + "\n");
         if (type.startsWith("0")) {
-            // action pour un message public
-            // this.zoneChat.appendText("Message public\n");
+            // action pour un message abonnés
+            // this.zoneChat.appendText("Message abonnés\n");
             this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
             this.zoneChat.appendText(expediteur + "> " + contenu + "\n");
         } else if (type.startsWith("1")) {
-            // action pour un message privés
-            // this.zoneChat.appendText("Message privé\n");
+            // action pour un message public
+            // this.zoneChat.appendText("Message public\n");
             this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
             this.zoneChat.appendText(expediteur + "->All> " + contenu + "\n");
         } else if (type.startsWith("2")) {
-            // action pour un message abonnés
-            // this.zoneChat.appendText("Message abonnés\n");
+            // action pour un message privés
+            // this.zoneChat.appendText("Message privé\n");
             this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
             this.zoneChat.appendText(expediteur + "->You> " + contenu + "\n");
         } else if (type.startsWith("3")) {
@@ -208,7 +210,7 @@ public class Tuito extends Application {
         this.zoneChat.setEditable(false);
         this.zoneChat.setWrapText(true);
         this.zoneChat.setPrefHeight(800);
-        this.zoneChat.setPrefWidth(300);
+        this.zoneChat.setPrefWidth(400);
 
         TextField champMessage = new TextField();
         champMessage.setPromptText("Ecrire un message...");
@@ -229,10 +231,28 @@ public class Tuito extends Application {
             }
         });
 
-        VBox root = new VBox(10);
-        root.getChildren().addAll(zoneChat, champMessage, boutonEnvoyer);
+        VBox aside = new VBox(10);
+        Button boutonAbonnes = new Button("Abonnes");
+        Button boutonAbonnements = new Button("Abonnements");
+        Button boutonUtilisateurs = new Button("Utilisateurs");
+        boutonUtilisateurs.setOnAction(e -> {
+            champMessage.setText("/list");
+            envoyerMessage(champMessage.getText());
+            champMessage.clear();
+        });
+        boutonAbonnes.setMaxWidth(Double.MAX_VALUE);
+        boutonAbonnements.setMaxWidth(Double.MAX_VALUE);
+        boutonUtilisateurs.setMaxWidth(Double.MAX_VALUE);
+        aside.getChildren().addAll(boutonAbonnes, boutonAbonnements, boutonUtilisateurs);
 
-        Scene scene = new Scene(root, 300, 600);
+        BorderPane root = new BorderPane();
+        VBox content = new VBox(10);
+        content.getChildren().addAll(zoneChat, champMessage, boutonEnvoyer);
+
+        root.setCenter(content);
+        root.setRight(aside);
+
+        Scene scene = new Scene(root, 400, 600);
         this.primaryStage.setScene(scene);
         this.primaryStage.show();
     }
