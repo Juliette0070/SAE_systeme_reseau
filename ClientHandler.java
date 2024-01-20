@@ -123,7 +123,7 @@ public class ClientHandler implements Runnable {
                 } if (followers.endsWith(", ")) {followers = followers.substring(0, followers.length() - 2);}
                 this.sendMessageFromServer(followers, "321");
             } else {
-                this.sendMessageFromServer("Vous n'avez pas d'abonnes.", "321");
+                this.sendMessageFromServer("", "321");
             }
         } else if (commande.startsWith("/suivi")) {
             Integer nbSuivis = this.utilisateur.getAbonnements().size();
@@ -135,7 +135,7 @@ public class ClientHandler implements Runnable {
                 } if (abonnements.endsWith(", ")) {abonnements = abonnements.substring(0, abonnements.length() - 2);}
                 this.sendMessageFromServer(abonnements, "322");
             } else {
-                this.sendMessageFromServer("Vous n'avez pas d'abonnements.", "322");
+                this.sendMessageFromServer("", "322");
             }
         } else if (commande.startsWith("/quit")) {
             this.utilisateur.setConnecte(false);

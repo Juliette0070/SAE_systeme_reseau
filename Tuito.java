@@ -155,9 +155,15 @@ public class Tuito extends Application {
                         break;
                     case "321":
                         // action pour la liste des abonnes
+                        Platform.runLater(() -> {
+                            fenetreAbonnes(contenu);
+                        });                        
                         break;
                     case "322":
                         // action pour la liste des abonnements
+                        Platform.runLater(() -> {
+                            fenetreAbonnements(contenu);
+                        });
                         break;
                     default:
                         // action par défaut pour un message de retour
@@ -327,6 +333,72 @@ public class Tuito extends Application {
             btns.getChildren().addAll(follow, unfollow);
             userContainer.getChildren().addAll(username, btns);
             liste.getChildren().add(userContainer);
+        }
+
+        content.setTop(titre);
+        content.setCenter(liste);
+        
+        BorderPane root = new BorderPane();
+        root.setTop(back);
+        root.setCenter(content);
+        root.setPadding(new Insets(30));
+        Scene scene = new Scene(root, 400, 600);
+        this.primaryStage.setScene(scene);
+        this.primaryStage.show();
+    }
+
+    private void fenetreAbonnements(String listeUtilisateurs) {
+        this.primaryStage.setTitle("Liste des abonnements");
+        Button back = new Button("Retour");
+        back.setOnAction(e -> {
+            fenetreSalon();
+        });
+
+        BorderPane content = new BorderPane();
+
+        Label titre = new Label("Liste des abonnements");
+        titre.setPadding(new Insets(20, 0, 20, 0));
+        VBox liste = new VBox(10);
+        liste.setPadding(new Insets(10));
+
+        List<String> utilisateurs = List.of(listeUtilisateurs.split(","));
+
+        for (String user : utilisateurs) {
+            Label username = new Label(user);
+            liste.getChildren().add(username);
+        }
+
+        content.setTop(titre);
+        content.setCenter(liste);
+        
+        BorderPane root = new BorderPane();
+        root.setTop(back);
+        root.setCenter(content);
+        root.setPadding(new Insets(30));
+        Scene scene = new Scene(root, 400, 600);
+        this.primaryStage.setScene(scene);
+        this.primaryStage.show();
+    }
+
+    private void fenetreAbonnes(String listeUtilisateurs) {
+        this.primaryStage.setTitle("Liste des abonnés");
+        Button back = new Button("Retour");
+        back.setOnAction(e -> {
+            fenetreSalon();
+        });
+
+        BorderPane content = new BorderPane();
+
+        Label titre = new Label("Liste des abonnés");
+        titre.setPadding(new Insets(20, 0, 20, 0));
+        VBox liste = new VBox(10);
+        liste.setPadding(new Insets(10));
+
+        List<String> utilisateurs = List.of(listeUtilisateurs.split(","));
+
+        for (String user : utilisateurs) {
+            Label username = new Label(user);
+            liste.getChildren().add(username);
         }
 
         content.setTop(titre);
