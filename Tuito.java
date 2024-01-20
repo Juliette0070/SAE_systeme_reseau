@@ -45,6 +45,15 @@ public class Tuito extends Application {
     }
 
     public void handleMessage(int id, Date date, int likes, String expediteur, String contenu, String type) {
+        /**
+         * Affiche le message dans l'interface
+         * @param id : l'id du message
+         * @param date : la date du message
+         * @param likes : le nombre de likes du message
+         * @param expediteur : l'expediteur du message
+         * @param contenu : le contenu du message
+         * @param type : le type du message
+         */
         if (type.startsWith("0")) {
             // action pour un message abonnés
             this.zoneChat.appendText("id:" + id + " | " + date + " | " + likes + " likes\n");
@@ -139,7 +148,13 @@ public class Tuito extends Application {
     }
 
     public void popUpDemande(String titre, String header, String message) {
-        Platform.runLater(() -> {
+        /**
+         * Affiche une pop-up de demande
+         * @param titre : le titre de la pop-up
+         * @param header : le header de la pop-up
+         * @param message : le message de la pop-up
+         */
+        Platform.runLater(() -> { // pour éviter les erreurs de thread
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle(titre);
             if (header != null) {dialog.setHeaderText(header);}
@@ -151,6 +166,12 @@ public class Tuito extends Application {
     }
 
     public void popUpInformation(String titre, String header, String message) {
+        /**
+         * Affiche une pop-up d'information
+         * @param titre : le titre de la pop-up
+         * @param header : le header de la pop-up
+         * @param message : le message de la pop-up
+         */
         Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle(titre);
@@ -161,6 +182,9 @@ public class Tuito extends Application {
     }
 
     private void fenetreSalon() {
+        /**
+         * Fenetre du salon de discussion
+         */
         this.primaryStage.setTitle("Salon de Discussion");
 
         this.zoneChat.setEditable(false);
@@ -235,6 +259,10 @@ public class Tuito extends Application {
     }
 
     private void fenetreUtilisateurs(String listeUtilisateurs) {
+        /**
+         * Fenetre de la liste des utilisateurs
+         * @param listeUtilisateurs : la liste des utilisateurs
+         */
         this.primaryStage.setTitle("Liste des Utilisateurs");
         Button back = new Button("Retour");
         back.setOnAction(e -> {
@@ -290,6 +318,10 @@ public class Tuito extends Application {
     }
 
     private void fenetreAbonnements(String listeUtilisateurs) {
+        /**
+         * Fenetre de la liste des abonnements
+         * @param listeUtilisateurs : la liste des abonnements
+         */
         this.primaryStage.setTitle("Liste des abonnements");
         Button back = new Button("Retour");
         back.setOnAction(e -> {
@@ -323,6 +355,10 @@ public class Tuito extends Application {
     }
 
     private void fenetreAbonnes(String listeUtilisateurs) {
+        /**
+         * Fenetre de la liste des abonnés
+         * @param listeUtilisateurs : la liste des abonnés
+         */
         this.primaryStage.setTitle("Liste des abonnés");
         Button back = new Button("Retour");
         back.setOnAction(e -> {
@@ -356,8 +392,10 @@ public class Tuito extends Application {
     }
 
     private void envoyerMessage(String message) {
-        // String nouveauMessage = "You> " + message + "\n";
-        // this.zoneChat.appendText(nouveauMessage);
+        /**
+         * Envoie le message au serveur
+         * @param message : le message à envoyer
+         */
         this.writer.println(message);
     }
 }

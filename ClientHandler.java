@@ -27,11 +27,10 @@ public class ClientHandler implements Runnable {
             while (this.utilisateur == null) {
                 try {this.recupererUtilisateur();}catch (IOException e) {e.printStackTrace();}
             }
-            this.utilisateur.setConnecte(true);
             this.utilisateur.setClient(this);
             this.sendMessageFromServer("Bienvenue " + this.utilisateur.getPseudo() + " !", "313");
             this.afficherMessagesNonLus();
-            while (this.utilisateur.isConnecte()) {
+            while (this.utilisateur.getClient() != null) {
                 String message = reader.readLine();
                 if (message == null || message.equals("")) {continue;}
                 if (message.startsWith("/")) {this.handleCommande(message);}
@@ -44,16 +43,22 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
             System.out.println(this.client.getInetAddress() + " encountered an error.");
         }
-        this.utilisateur.setConnecte(false);
         this.utilisateur.setClient(null);
         System.out.println(this.client.getInetAddress() + " disconnected.");
     }
 
     public Utilisateur getUtilisateur() {
+        /**
+         * Renvoie l'utilisateur associe au client
+         */
         return this.utilisateur;
     }
 
     public void recupererUtilisateur() throws IOException {
+        /**
+         * Recupere l'utilisateur associe au client
+         * @throws IOException
+         */
         this.sendMessageFromServer("Pseudo:", "300");
         String pseudo = this.reader.readLine();
         this.sendMessageFromServer("Mot de passe:", "301");
@@ -67,7 +72,7 @@ public class ClientHandler implements Runnable {
                 this.server.addUtilisateur(this.utilisateur);
                 this.sendMessageFromServer("Utilisateur cree !", "310");
             }
-        } else if (this.utilisateur.isConnecte()) {
+        } else if (this.utilisateur.getClient() != null) {
             this.utilisateur = null;
             this.sendMessageFromServer("Cet utilisateur est deja connecte !", "311");
         } else if (!this.utilisateur.getMotDePasse().equals(motDePasse)) {
@@ -77,6 +82,11 @@ public class ClientHandler implements Runnable {
     }
 
     public void handleCommande(String commande) throws IOException {
+        /**
+         * Execute la commande entree par l'utilisateur
+         * @param commande la commande entree par l'utilisateur
+         * @throws IOException
+         */
         if (commande.startsWith("/name")) {
             String nom = commande.split(" ")[1];
             if (this.server.getUtilisateur(nom) == null) {
@@ -136,7 +146,6 @@ public class ClientHandler implements Runnable {
                 this.sendMessageFromServer("", "322");
             }
         } else if (commande.startsWith("/quit")) {
-            this.utilisateur.setConnecte(false);
             this.utilisateur.setClient(null);
             this.client.close();
         } else if (commande.startsWith("/broadcast")) {
@@ -220,6 +229,9 @@ public class ClientHandler implements Runnable {
     }
 
     public void afficherUtilisateurs() {
+        /**
+         * Affiche la liste des utilisateurs
+         */
         String liste = "";
         for (Utilisateur client : this.server.getUtilisateurs()) {
             String personne = client.getPseudo();
@@ -244,6 +256,9 @@ public class ClientHandler implements Runnable {
     }
 
     public void help() {
+        /**
+         * Affiche l'aide
+         */
         String aide = "";
         aide += "/name <name> : change le nom du client,";
         aide += "/msg <name> <message> : envoie un message prive a <name>,";
@@ -260,22 +275,38 @@ public class ClientHandler implements Runnable {
     }
 
     public void sendMessage(Message message) {
+        /**
+         * Envoie un message au client
+         * @param message le message a envoyer
+         */
         this.writer.println(message);
     }
 
     public void sendMessageFromServer(String message) {
+        /**
+         * Envoie un message au client
+         * @param message le message a envoyer
+         */
         Message msg = this.server.createMessage(message, this.server.getUtilisateurServer(), "3");
         this.server.addMessage(msg);
         this.writer.println(msg);
     }
 
     public void sendMessageFromServer(String message, String type) {
+        /**
+         * Envoie un message au client
+         * @param message le message a envoyer
+         * @param type le type du message
+         */
         Message msg = this.server.createMessage(message, this.server.getUtilisateurServer(), type);
         this.server.addMessage(msg);
         this.writer.println(msg);
     }
 
     public void afficherMessagesNonLus() {
+        /**
+         * Affiche les messages non lus
+         */
         for (Message message : this.utilisateur.getMessagesNonLus()) {
             this.sendMessage(message);
             this.utilisateur.setLu(message);

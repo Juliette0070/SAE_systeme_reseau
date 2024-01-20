@@ -56,6 +56,10 @@ public class Client extends Thread {
     }
 
     public void afficheMessage(String message) {
+        /**
+         * Affiche le message dans l'interface ou dans le terminal
+         * @param message : le message à afficher
+         */
         if (this.appli == null) {
             this.afficheMessageTerminal(message);
         } else {
@@ -64,6 +68,10 @@ public class Client extends Thread {
     }
 
     public void afficheMessageInterface(String message) {
+        /**
+         * Affiche le message dans l'interface
+         * @param message : le message à afficher
+         */
         // parsing du json
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
@@ -83,6 +91,9 @@ public class Client extends Thread {
     }
 
     public void afficheMessageTerminal(String message) {
+        /**
+         * Affiche le message dans le terminal
+         */
         // System.out.println(message);
         // parsing du json
         Gson gson = new Gson();
@@ -91,19 +102,20 @@ public class Client extends Thread {
         String contenu = jsonObject.get("contenu").getAsString();
         String expediteur = jsonObject.get("expediteur").getAsString();
         int likes = jsonObject.get("likes").getAsInt();
-        int type = jsonObject.get("type").getAsInt();
         String dateString = jsonObject.get("date").getAsString();
         // conversion date String en Date
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
         Date date = new Date();
         try {date = dateFormat.parse(dateString);}
         catch (ParseException e) {e.printStackTrace();}
-        // affichage en fonction du type (--A VENIR--)
         System.out.println("id:" + id + " | " + date + " | " + likes + " likes");
         System.out.println(expediteur + ">" + contenu);
     }
 
     private void closeSocket() {
+        /**
+         * Ferme la socket et les flux
+         */
         try {
             this.clientSocket.close();
             this.reader.close();

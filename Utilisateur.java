@@ -1,7 +1,5 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +10,6 @@ public class Utilisateur {
     private String motDePasse;
     private Set<Utilisateur> abonnes;
     private Set<Utilisateur> abonnements;
-    private boolean connecte;
     private ClientHandler client;
     private Map<Message, Boolean> messages;
 
@@ -22,7 +19,6 @@ public class Utilisateur {
         this.motDePasse = motDePasse;
         this.abonnes = new HashSet<>();
         this.abonnements = new HashSet<>();
-        this.connecte = false;
         this.messages = new HashMap<>();
         this.client = null;
     }
@@ -83,21 +79,13 @@ public class Utilisateur {
         this.abonnements.remove(utilisateur);
     }
 
-    public boolean isConnecte() {
-        return this.connecte;
-    }
-
-    public void setConnecte(boolean connecte) {
-        this.connecte = connecte;
-    }
-
     public Map<Message, Boolean> getMessages() {
         return this.messages;
     }
 
     public void addMessage(Message message) {
         boolean lu = false;
-        if (this.connecte) {lu = true;}
+        if (this.client != null) {lu = true;}
         this.messages.put(message, lu);
         if (this.client != null) {this.client.sendMessage(message);}
     }
@@ -141,6 +129,9 @@ public class Utilisateur {
     }
 
     public String sauvegarde() {
+        /**
+         * Chaine de l'utilisateur pour la sauvegarde
+         */
         String utilisateurString = "";
         utilisateurString += this.id + ";";
         utilisateurString += this.pseudo + ";";

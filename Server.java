@@ -40,11 +40,20 @@ public class Server implements Runnable {
         }
     }
 
+    // Getters et Setters + Adders et Removers
+
     public Utilisateur getUtilisateurServer() {
+        /**
+         * Renvoie l'utilisateur Serveur
+         */
         return this.getUtilisateur("Serveur");
     }
 
     public Utilisateur getUtilisateur(String pseudo) {
+        /**
+         * Renvoie l'utilisateur avec le pseudo donné
+         * @param pseudo le pseudo de l'utilisateur
+         */
         for (Utilisateur utilisateur : this.utilisateurs) {
             if (utilisateur.getPseudo().equals(pseudo)) {
                 return utilisateur;
@@ -53,6 +62,10 @@ public class Server implements Runnable {
     }
 
     public Utilisateur getUtilisateur(int id) {
+        /**
+         * Renvoie l'utilisateur avec l'id donné
+         * @param id l'id de l'utilisateur
+         */
         for (Utilisateur utilisateur : this.utilisateurs) {
             if (utilisateur.getId() == id) {
                 return utilisateur;
@@ -61,56 +74,48 @@ public class Server implements Runnable {
     }
 
     public void addUtilisateur(Utilisateur utilisateur) {
+        /**
+         * Ajoute un utilisateur à la liste des utilisateurs
+         * @param utilisateur l'utilisateur à ajouter
+         */
         this.utilisateurs.add(utilisateur);
     }
 
-    public void broadcast(Message message) {
-        for (Utilisateur utilisateur : this.utilisateurs) {
-            if (!utilisateur.getPseudo().equals(message.getExpediteur().getPseudo())) {
-                utilisateur.addMessage(message);
-            }
-        } this.messages.add(message);
-    }
-
-    public void sendTo(String nomClient, Message message) {
-        for (Utilisateur utilisateur : this.utilisateurs) {
-            if (utilisateur.getPseudo().equals(nomClient)) {
-                utilisateur.addMessage(message);
-            }
-        } this.messages.add(message);
-    }
-
-    public void sendToAbonnes(Message message) {
-        for (Utilisateur utilisateur : message.getExpediteur().getAbonnes()) {
-            utilisateur.addMessage(message);
-        } this.messages.add(message);
-    }
-
-    public Message createMessage(String contenu, Utilisateur expediteur, String type) {
-        int id = this.messages.size();
-        Message message = new Message(id, contenu, expediteur, type);
-        return message;
-    }
-
     public void addMessage(Message message) {
+        /**
+         * Ajoute un message à la liste des messages
+         * @param message le message à ajouter
+         */
         this.messages.add(message);
     }
 
-    // Getters et setters
-
     public List<Message> getMessages() {
+        /**
+         * Renvoie la liste des messages
+         */
         return this.messages;
     }
 
     public Set<Utilisateur> getUtilisateurs() {
+        /**
+         * Renvoie la liste des utilisateurs
+         */
         return this.utilisateurs;
     }
 
     public void removeClient(ClientHandler clientHandler) {
+        /**
+         * Supprime un client de la liste des utilisateurs
+         * @param clientHandler le client à supprimer
+         */
         this.utilisateurs.remove(clientHandler.getUtilisateur());
     }
 
     public Message getMessage(int id) {
+        /**
+         * Renvoie le message avec l'id donné
+         * @param id l'id du message
+         */
         for (Message message : this.messages) {
             if (message.getId() == id) {
                 return message;
@@ -119,19 +124,78 @@ public class Server implements Runnable {
     }
 
     public void removeUtilisateur(Utilisateur utilisateur) {
+        /**
+         * Supprime un utilisateur de la liste des utilisateurs
+         * @param utilisateur l'utilisateur à supprimer
+         */
         this.utilisateurs.remove(utilisateur);
     }
 
     public int getIdUtilisateur() {
+        /**
+         * Renvoie un id utilisateur non utilisé
+         */
         int id = this.utilisateurs.size();
         while (this.getUtilisateur(id) != null) {
             id++;
         } return id;
     }
 
+    // Messages
+
+    public void broadcast(Message message) {
+        /**
+         * Envoie un message à tous les utilisateurs
+         * @param message le message à envoyer
+         */
+        for (Utilisateur utilisateur : this.utilisateurs) {
+            if (!utilisateur.getPseudo().equals(message.getExpediteur().getPseudo())) {
+                utilisateur.addMessage(message);
+            }
+        } this.messages.add(message);
+    }
+
+    public void sendTo(String nomClient, Message message) {
+        /**
+         * Envoie un message à un utilisateur
+         * @param nomClient le pseudo de l'utilisateur
+         * @param message le message à envoyer
+         */
+        for (Utilisateur utilisateur : this.utilisateurs) {
+            if (utilisateur.getPseudo().equals(nomClient)) {
+                utilisateur.addMessage(message);
+            }
+        } this.messages.add(message);
+    }
+
+    public void sendToAbonnes(Message message) {
+        /**
+         * Envoie un message à tous les abonnés de l'expéditeur
+         * @param message le message à envoyer
+         */
+        for (Utilisateur utilisateur : message.getExpediteur().getAbonnes()) {
+            utilisateur.addMessage(message);
+        } this.messages.add(message);
+    }
+
+    public Message createMessage(String contenu, Utilisateur expediteur, String type) {
+        /**
+         * Crée un message
+         * @param contenu le contenu du message
+         * @param expediteur l'expéditeur du message
+         * @param type le type du message
+         */
+        int id = this.messages.size();
+        Message message = new Message(id, contenu, expediteur, type);
+        return message;
+    }
+
     // Sauvegarde
 
     public void sauvegarder() {
+        /**
+         * Sauvegarde les utilisateurs et les messages dans des fichiers
+         */
         // fichier utilisateurs
         String chaineUtilisateurs = "";
         for (Utilisateur utilisateur : this.utilisateurs) {chaineUtilisateurs += utilisateur.sauvegarde() + "\n";}
@@ -159,6 +223,9 @@ public class Server implements Runnable {
     }
 
     public void charger() {
+        /**
+         * Charge les utilisateurs et les messages depuis des fichiers
+         */
         Set<Utilisateur> setUtilisateurs = new HashSet<>();
         List<Message> listeMessages = new ArrayList<>();
         // fichier utilisateurs
@@ -267,6 +334,9 @@ public class Server implements Runnable {
     // Autres
 
     public void closeServer() {
+        /**
+         * Ferme le serveur
+         */
         System.out.println("Saving server...");
         this.sauvegarder();
         System.out.println("Closing server...");

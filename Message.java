@@ -87,6 +87,9 @@ public class Message {
     }
 
     public String sauvegarde() {
+        /**
+         * Chaine du message pour la sauvegarde
+         */
         String messageString = "";
         messageString += this.id + ";";
         messageString += this.contenu + ";";
