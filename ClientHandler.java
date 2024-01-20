@@ -95,7 +95,7 @@ public class ClientHandler implements Runnable {
             String[] args = commande.split(" ");
             String personne = args[1];
             Utilisateur user = this.server.getUtilisateur(personne);
-            if (user != null || !(user.equals(this.utilisateur))) {
+            if (user != null) {
                 user.addAbonne(this.utilisateur);
                 this.utilisateur.addAbonnement(user);
                 this.sendMessageFromServer("Vous suivez desormais " + personne + ".", "315");
@@ -151,7 +151,7 @@ public class ClientHandler implements Runnable {
             this.server.broadcast(this.server.createMessage(msg, this.utilisateur, "1"));
         } else if (commande.startsWith("/list")) {
             this.afficherUtilisateurs();
-        }else if (commande.startsWith("like")) {
+        } else if (commande.startsWith("like")) {
             // liker
         } else if (commande.startsWith("unlike")) {
             // unliker
@@ -186,7 +186,7 @@ public class ClientHandler implements Runnable {
                         }
                     } if (client.getAbonnes().contains(this.utilisateur)) {suivi = true;}
                     if (vousSuit && suivi) {personne += " (amis)";}
-                    else if (vousSuit) {personne += " (vous suit)";}
+                    else if (vousSuit) {personne += " (abonné)";}
                     else if (suivi) {personne += " (suivi)";} 
                 } liste += personne + ", ";
             }

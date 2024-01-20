@@ -1,8 +1,11 @@
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -146,6 +149,9 @@ public class Tuito extends Application {
                 switch (type) {
                     case "320":
                         // action pour la liste des utilisateurs
+                        Platform.runLater(() -> {
+                            fenetreUtilisateurs(contenu);
+                        });
                         break;
                     case "321":
                         // action pour la liste des abonnes
@@ -274,6 +280,62 @@ public class Tuito extends Application {
         root.setCenter(content);
         root.setRight(aside);
 
+        Scene scene = new Scene(root, 400, 600);
+        this.primaryStage.setScene(scene);
+        this.primaryStage.show();
+    }
+
+    private void fenetreUtilisateurs(String listeUtilisateurs) {
+        this.primaryStage.setTitle("Liste des Utilisateurs");
+        Button back = new Button("Retour");
+        back.setOnAction(e -> {
+            fenetreSalon();
+        });
+
+        BorderPane content = new BorderPane();
+
+        Label titre = new Label("Liste des utilisateurs");
+        titre.setPadding(new Insets(20, 0, 20, 0));
+        VBox liste = new VBox(10);
+        liste.setPadding(new Insets(10));
+
+        List<String> utilisateurs = List.of(listeUtilisateurs.split(","));
+
+        for (String user : utilisateurs) {
+            String pseudo = user;
+            String[] split = user.split(" ");
+            for (String part : split) {
+                if (!part.startsWith("(") && !part.startsWith(" ")) {
+                    pseudo = part;
+                }
+            }
+
+            final String pseudoFinal = pseudo;
+            System.out.println("pseudo " + pseudoFinal);
+            HBox userContainer = new HBox(30);
+
+            Label username = new Label(user);
+            HBox btns = new HBox(10);
+            Button follow = new Button("Suivre");
+            follow.setOnAction(e -> {
+                this.writer.println("/follow " + pseudoFinal);
+            });
+            Button unfollow = new Button("Ne plus suivre");
+            unfollow.setOnAction(e -> {
+                this.writer.println("/unfollow " + pseudoFinal);
+            });
+            btns.getChildren().addAll(follow, unfollow);
+            userContainer.getChildren().addAll(username, btns);
+            liste.getChildren().add(userContainer);
+        }
+
+        content.setTop(titre);
+        content.setCenter(liste);
+        
+        BorderPane root = new BorderPane();
+        root.setTop(back);
+        root.setCenter(content);
+        root.setPadding(new Insets(30));
         Scene scene = new Scene(root, 400, 600);
         this.primaryStage.setScene(scene);
         this.primaryStage.show();
