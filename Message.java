@@ -86,14 +86,29 @@ public class Message {
         this.type = type;
     }
 
+    public String sauvegarde() {
+        String messageString = "";
+        messageString += this.id + ";";
+        messageString += this.contenu + ";";
+        messageString += this.expediteur.getId() + ";";
+        messageString += this.date + ";";
+        for (Utilisateur utilisateur : this.likes) {messageString += utilisateur.getId() + ",";}
+        if (messageString.endsWith(",")) {messageString = messageString.substring(0, messageString.length() - 1);}
+        if (this.likes.size() == 0) {messageString += "-1";}
+        messageString += ";";
+        messageString += this.supprime + ";";
+        messageString += this.type;
+        return messageString;
+    }
+
     @Override
     public String toString() {
         return "{\"id\":" + this.id +
-                ", \"contenu\":\"" + this.contenu + '"' +
-                ", \"expediteur\":\"" + this.expediteur + '"' +
-                ", \"date\":\"" + this.date + '"' +
-                ", \"likes\":" + this.likes.size() +
-                ", \"type\":" + this.type +
+                ",\"contenu\":\"" + this.contenu + '"' +
+                ",\"expediteur\":\"" + this.expediteur + '"' +
+                ",\"date\":\"" + this.date + '"' +
+                ",\"likes\":" + this.likes.size() +
+                ",\"type\":" + this.type +
                 '}';
     }
 }

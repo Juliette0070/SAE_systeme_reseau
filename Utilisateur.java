@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class Utilisateur {
     
+    private int id;
     private String pseudo;
     private String motDePasse;
     private List<Utilisateur> abonnes;
@@ -15,7 +16,8 @@ public class Utilisateur {
     private ClientHandler client;
     private Map<Message, Boolean> messages;
 
-    public Utilisateur(String pseudo, String motDePasse) {
+    public Utilisateur(int id, String pseudo, String motDePasse) {
+        this.id = id;
         this.pseudo = pseudo;
         this.motDePasse = motDePasse;
         this.abonnes = new ArrayList<>();
@@ -23,6 +25,14 @@ public class Utilisateur {
         this.connecte = false;
         this.messages = new HashMap<>();
         this.client = null;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public ClientHandler getClient() {
@@ -128,6 +138,25 @@ public class Utilisateur {
             }
         }
         return messagesNonLus;
+    }
+
+    public String sauvegarde() {
+        String utilisateurString = "";
+        utilisateurString += this.id + ";";
+        utilisateurString += this.pseudo + ";";
+        utilisateurString += this.motDePasse + ";";
+        for (Utilisateur utilisateur : this.abonnes) {utilisateurString += utilisateur.getId() + ",";}
+        if (utilisateurString.endsWith(",")) {utilisateurString = utilisateurString.substring(0, utilisateurString.length() - 1);}
+        if (this.abonnes.size() == 0) {utilisateurString += "-1";}
+        utilisateurString += ";";
+        for (Utilisateur utilisateur : this.abonnements) {utilisateurString += utilisateur.getId() + ",";}
+        if (utilisateurString.endsWith(",")) {utilisateurString = utilisateurString.substring(0, utilisateurString.length() - 1);}
+        if (this.abonnements.size() == 0) {utilisateurString += "-1";}
+        utilisateurString += ";";
+        for (Message message : this.messages.keySet()) {utilisateurString += message.getId() + ":" + this.messages.get(message) + ",";}
+        if (utilisateurString.endsWith(",")) {utilisateurString = utilisateurString.substring(0, utilisateurString.length() - 1);}
+        if (this.messages.keySet().size() == 0) {utilisateurString += "-1";}
+        return utilisateurString;
     }
 
     @Override

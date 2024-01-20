@@ -63,7 +63,7 @@ public class ClientHandler implements Runnable {
             this.sendMessageFromServer("Cet utilisateur n'existe pas, voulez-vous le creer ? (o/n)", "302");
             String reponse = this.reader.readLine();
             if (reponse.equals("o") || reponse.equals("oui")) {
-                this.utilisateur = new Utilisateur(pseudo, motDePasse);
+                this.utilisateur = new Utilisateur(this.server.getUtilisateurs().size(), pseudo, motDePasse);
                 this.server.addUtilisateur(this.utilisateur);
                 this.sendMessageFromServer("Utilisateur cree !", "310");
             }
@@ -115,7 +115,6 @@ public class ClientHandler implements Runnable {
             }
         } else if (commande.startsWith("/abonnes")) {
             Integer nbFollowers = this.utilisateur.getAbonnes().size();
-            // this.sendMessageFromServer("Vous avez " + nbFollowers + " abonnes.");
             if (nbFollowers > 0) {
                 String followers = "";
                 for (Utilisateur user : this.utilisateur.getAbonnes()) {
@@ -125,7 +124,6 @@ public class ClientHandler implements Runnable {
             }
         } else if (commande.startsWith("/suivi")) {
             Integer nbSuivis = this.utilisateur.getAbonnements().size();
-            // this.sendMessageFromServer("Vous avez " + nbSuivis + " abonnements.");
             if (nbSuivis > 0) {
                 String abonnements = "";
                 for (Utilisateur user : this.utilisateur.getAbonnements()) {
@@ -147,19 +145,23 @@ public class ClientHandler implements Runnable {
             this.server.broadcast(this.server.createMessage(msg, this.utilisateur, "1"));
         } else if (commande.startsWith("/list")) {
             this.afficherUtilisateurs();
-        }else if (commande.startsWith("like")) {
+        }else if (commande.startsWith("/like")) {
             // liker
-        } else if (commande.startsWith("unlike")) {
+        } else if (commande.startsWith("/unlike")) {
             // unliker
-        } else if (commande.startsWith("delete")) {
+        } else if (commande.startsWith("/delete")) {
             if (this.utilisateur.getPseudo().equals("Serveur")) {
                 // supprimer le message peut importe l'utilisateur
             } else {
                 // supprimer le message s'il appartient à l'utilisateur
             }
-        } else if (commande.startsWith("remocaseve")) {
+        } else if (commande.startsWith("/remove")) {
             if (this.utilisateur.getPseudo().equals("Serveur")) {
                 // supprimer l'utilisateur
+            }
+        } else if (commande.startsWith("/save")) {
+            if (this.utilisateur.getPseudo().equals("Serveur")) {
+                this.server.sauvegarder();
             }
         } else {
             this.help();
