@@ -1,0 +1,250 @@
+class ClientHandler
+!!!129282.java!!!	ClientHandler(inout clientSocket : Socket, inout server : Server)
+        this.client = clientSocket;
+        this.server = server;
+        this.writer = new PrintWriter(this.client.getOutputStream(), true);
+        this.utilisateur = null;
+!!!129410.java!!!	run() : void
+        System.out.println(this.client.getInetAddress() + " connected.");
+        try {
+            this.reader = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
+            while (this.utilisateur == null) {
+                try {this.recupererUtilisateur();}catch (IOException e) {e.printStackTrace();}
+            }
+            this.utilisateur.setConnecte(true);
+            this.utilisateur.setClient(this);
+            this.sendMessageFromServer("Bienvenue " + this.utilisateur.getPseudo() + " !", "313");
+            this.afficherMessagesNonLus();
+            while (this.utilisateur.isConnecte()) {
+                String message = reader.readLine();
+                if (message == null || message.equals("")) {continue;}
+                if (message.startsWith("/")) {this.handleCommande(message);}
+                else {
+                    this.sendMessage(this.server.createMessage(message, this.utilisateur, "4"));
+                    this.server.sendToAbonnes(this.server.createMessage(message, this.utilisateur, "0"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(this.client.getInetAddress() + " encountered an error.");
+        }
+        this.utilisateur.setConnecte(false);
+        this.utilisateur.setClient(null);
+        System.out.println(this.client.getInetAddress() + " disconnected.");
+!!!129538.java!!!	getUtilisateur() : Utilisateur
+        return this.utilisateur;
+!!!129666.java!!!	recupererUtilisateur() : void
+        this.sendMessageFromServer("Pseudo:", "300");
+        String pseudo = this.reader.readLine();
+        this.sendMessageFromServer("Mot de passe:", "301");
+        String motDePasse = this.reader.readLine();
+        this.utilisateur = this.server.getUtilisateur(pseudo);
+        if (this.utilisateur == null) {
+            this.sendMessageFromServer("Cet utilisateur n'existe pas, voulez-vous le creer ? (o/n)", "302");
+            String reponse = this.reader.readLine();
+            if (reponse.equals("o") || reponse.equals("oui")) {
+                this.utilisateur = new Utilisateur(this.server.getIdUtilisateur(), pseudo, motDePasse);
+                this.server.addUtilisateur(this.utilisateur);
+                this.sendMessageFromServer("Utilisateur cree !", "310");
+            }
+        } else if (this.utilisateur.isConnecte()) {
+            this.utilisateur = null;
+            this.sendMessageFromServer("Cet utilisateur est deja connecte !", "311");
+        } else if (!this.utilisateur.getMotDePasse().equals(motDePasse)) {
+            this.utilisateur = null;
+            this.sendMessageFromServer("Mot de passe incorrect !", "312");
+        }
+!!!129794.java!!!	handleCommande(in commande : String) : void
+        if (commande.startsWith("/name")) {
+            String nom = commande.split(" ")[1];
+            if (this.server.getUtilisateur(nom) == null) {
+                this.utilisateur.setPseudo(nom);
+            } else {
+                this.sendMessageFromServer("Ce pseudo est deja utilise !", "314");
+            }
+        } else if (commande.startsWith("/msg")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            String msg = "";
+            for (int i = 2; i < args.length; i++) {msg += args[i] + " ";}
+            this.sendMessage(this.server.createMessage(msg, this.utilisateur, "4"));
+            this.server.sendTo(personne, this.server.createMessage(msg, this.utilisateur, "2"));
+        } else if (commande.startsWith("/follow")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            Utilisateur user = this.server.getUtilisateur(personne);
+            if (user != null) {
+                user.addAbonne(this.utilisateur);
+                this.utilisateur.addAbonnement(user);
+                this.sendMessageFromServer("Vous suivez desormais " + personne + ".", "315");
+            } else {
+                this.sendMessageFromServer("L'utilisateur " + personne + " n'existe pas.", "316");
+            }
+        } else if (commande.startsWith("/unfollow")) {
+            String[] args = commande.split(" ");
+            String personne = args[1];
+            Utilisateur user = this.server.getUtilisateur(personne);
+            if (user != null && this.utilisateur.getAbonnements().contains(user)) {
+                user.removeAbonne(this.utilisateur);
+                this.utilisateur.removeAbonnement(user);
+                this.sendMessageFromServer("Vous ne suivez plus " + personne + ".", "317");
+            } else {
+                this.sendMessageFromServer("L'utilisateur " + personne + " n'existe pas ou n'est pas dans votre liste d'abonnements", "318");
+            }
+        } else if (commande.startsWith("/abonnes")) {
+            Integer nbFollowers = this.utilisateur.getAbonnes().size();
+            if (nbFollowers > 0) {
+                String followers = "";
+                for (Utilisateur user : this.utilisateur.getAbonnes()) {
+                    followers += user.getPseudo() + ",";
+                } if (followers.endsWith(", ")) {followers = followers.substring(0, followers.length() - 2);}
+                this.sendMessageFromServer(followers, "321");
+            } else {
+                this.sendMessageFromServer("", "321");
+            }
+        } else if (commande.startsWith("/suivi")) {
+            Integer nbSuivis = this.utilisateur.getAbonnements().size();
+            if (nbSuivis > 0) {
+                String abonnements = "";
+                for (Utilisateur user : this.utilisateur.getAbonnements()) {
+                    abonnements += user.getPseudo() + ",";
+                } if (abonnements.endsWith(", ")) {abonnements = abonnements.substring(0, abonnements.length() - 2);}
+                this.sendMessageFromServer(abonnements, "322");
+            } else {
+                this.sendMessageFromServer("", "322");
+            }
+        } else if (commande.startsWith("/quit")) {
+            this.utilisateur.setConnecte(false);
+            this.utilisateur.setClient(null);
+            this.client.close();
+        } else if (commande.startsWith("/broadcast")) {
+            String[] args = commande.split(" ");
+            String msg = "";
+            for (int i = 1; i < args.length; i++) {
+                msg += args[i] + " ";
+            }
+            this.sendMessage(this.server.createMessage(msg, this.utilisateur, "4"));
+            this.server.broadcast(this.server.createMessage(msg, this.utilisateur, "1"));
+        } else if (commande.startsWith("/list")) {
+            this.afficherUtilisateurs();
+        }else if (commande.startsWith("/like")) {
+            String[] args = commande.split(" ");
+            String idString = args[1];
+            try {
+                int id = Integer.parseInt(idString);
+                Message message = this.server.getMessage(id);
+                message.addLike(this.utilisateur);
+            }
+            catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
+        } else if (commande.startsWith("/unlike")) {
+            String[] args = commande.split(" ");
+            String idString = args[1];
+            try {
+                int id = Integer.parseInt(idString);
+                Message message = this.server.getMessage(id);
+                message.removeLike(this.utilisateur);
+            }
+            catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
+        } else if (commande.startsWith("/delete")) {
+            if (this.utilisateur.getPseudo().equals("Serveur")) {
+                String[] args = commande.split(" ");
+                String idString = args[1];
+                try {
+                    int id = Integer.parseInt(idString);
+                    Message message = this.server.getMessage(id);
+                    message.supprime(true);
+                    for (Utilisateur uti : this.server.getUtilisateurs()) {
+                        uti.removeMessage(message);
+                    }
+                }
+                catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
+            } else {
+                // supprimer le message s'il appartient à l'utilisateur
+                String[] args = commande.split(" ");
+                String idString = args[1];
+                try {
+                    int id = Integer.parseInt(idString);
+                    Message message = this.server.getMessage(id);
+                    if (message.getExpediteur().equals(this.utilisateur)) {
+                        this.sendMessageFromServer("Vous n'etes pas la personne a l'origine de ce message", "31");
+                        return;
+                    }
+                    message.supprime(true);
+                    for (Utilisateur uti : this.server.getUtilisateurs()) {
+                        uti.removeMessage(message);
+                    }
+                }
+                catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
+            }
+        } else if (commande.startsWith("/remove")) {
+            if (this.utilisateur.getPseudo().equals("Serveur")) {
+                // supprimer l'utilisateur
+                String[] args = commande.split(" ");
+                String idString = args[1];
+                try {
+                    int id = Integer.parseInt(idString);
+                    Utilisateur utilisateur = this.server.getUtilisateur(id);
+                    this.server.removeUtilisateur(utilisateur);
+                }
+                catch (Exception e) {this.sendMessageFromServer("L'id doit etre un nombre !", "319");}
+            }
+        } else if (commande.startsWith("/save")) {
+            if (this.utilisateur.getPseudo().equals("Serveur")) {
+                this.server.sauvegarder();
+            }
+        } else {
+            this.help();
+        }
+!!!129922.java!!!	afficherUtilisateurs() : void
+        String liste = "";
+        for (Utilisateur client : this.server.getUtilisateurs()) {
+            String personne = client.getPseudo();
+            if (!client.getPseudo().equals("Serveur")) {
+                if (client.equals(this.utilisateur)) {personne += " (vous)";}
+                else {
+                    boolean vousSuit = false;
+                    boolean suivi = false;
+                    for (Utilisateur abonne : this.utilisateur.getAbonnes()) {
+                        if (abonne.equals(client)) {
+                            vousSuit = true;
+                            break;
+                        }
+                    } if (client.getAbonnes().contains(this.utilisateur)) {suivi = true;}
+                    if (vousSuit && suivi) {personne += " (amis)";}
+                    else if (vousSuit) {personne += " (abonné)";}
+                    else if (suivi) {personne += " (suivi)";} 
+                } liste += personne + ", ";
+            }
+        } if (liste.endsWith(", ")) {liste = liste.substring(0, liste.length() - 2);}
+        this.sendMessageFromServer(liste, "320");
+!!!130050.java!!!	help() : void
+        String aide = "";
+        aide += "/name <name> : change le nom du client,";
+        aide += "/msg <name> <message> : envoie un message prive a <name>,";
+        aide += "/follow <name> : suit les messages de <name>,";
+        aide += "/unfollow <name> : ne suit plus les messages de <name>,";
+        aide += "/like <id_message> : like le message dont l'id est <id_message> --A VENIR--,";
+        aide += "/unlike <id_message> : enleve le like sur le message dont l'id est <id_message> (si like) --A VENIR--,";
+        aide += "/delete <id_message> : supprime le message dont l'id est <id_message> (si c'est vous qui l'avez poste) --A VENIR--,";
+        aide += "/broadcast <message> : envoie un message a tous les utilisateurs,";
+        aide += "/list : affiche les utilisateurs connectes,";
+        aide += "/quit : quitte le serveur,";
+        aide += "/help : affiche les commandes";
+        this.sendMessageFromServer(aide, "323");
+!!!130178.java!!!	sendMessage(inout message : Message) : void
+        this.writer.println(message);
+!!!130306.java!!!	sendMessageFromServer(in message : String) : void
+        Message msg = this.server.createMessage(message, this.server.getUtilisateurServer(), "3");
+        this.server.addMessage(msg);
+        this.writer.println(msg);
+!!!130434.java!!!	sendMessageFromServer(in message : String, in type : String) : void
+        Message msg = this.server.createMessage(message, this.server.getUtilisateurServer(), type);
+        this.server.addMessage(msg);
+        this.writer.println(msg);
+!!!130562.java!!!	afficherMessagesNonLus() : void
+        for (Message message : this.utilisateur.getMessagesNonLus()) {
+            this.sendMessage(message);
+            this.utilisateur.setLu(message);
+        }
+!!!130690.java!!!	toString() : String
+        return this.utilisateur.getPseudo();

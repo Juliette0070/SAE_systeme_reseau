@@ -1,0 +1,62 @@
+class Message
+!!!131074.java!!!	Message(in id : int, in contenu : String, inout expediteur : Utilisateur, in type : String)
+        this.id = id;
+        this.contenu = contenu;
+        this.expediteur = expediteur;
+        this.date = new Date();
+        this.likes = new HashSet<>();
+        this.supprime = false;
+        this.type = type;
+!!!131202.java!!!	getId() : int
+        return this.id;
+!!!131330.java!!!	setId(in id : int) : void
+        this.id = id;
+!!!131458.java!!!	getContenu() : String
+        return this.contenu;
+!!!131586.java!!!	setContenu(in contenu : String) : void
+        this.contenu = contenu;
+!!!131714.java!!!	getExpediteur() : Utilisateur
+        return this.expediteur;
+!!!131842.java!!!	setExpediteur(inout expediteur : Utilisateur) : void
+        this.expediteur = expediteur;
+!!!131970.java!!!	getDate() : Date
+        return this.date;
+!!!132098.java!!!	setDate(inout date : Date) : void
+        this.date = date;
+!!!132226.java!!!	getLikes() : Utilisateur
+        return this.likes;
+!!!132354.java!!!	addLike(inout utilisateur : Utilisateur) : void
+        this.likes.add(utilisateur);
+!!!132482.java!!!	removeLike(inout utilisateur : Utilisateur) : void
+        this.likes.remove(utilisateur);
+!!!132610.java!!!	getNbLikes() : int
+        return this.likes.size();
+!!!132738.java!!!	isSupprime() : boolean
+        return this.supprime;
+!!!132866.java!!!	supprime(inout supprime : boolean) : void
+        this.supprime = supprime;
+!!!132994.java!!!	getType() : String
+        return type;
+!!!133122.java!!!	setType(in type : String) : void
+        this.type = type;
+!!!133250.java!!!	sauvegarde() : String
+        String messageString = "";
+        messageString += this.id + ";";
+        messageString += this.contenu + ";";
+        messageString += this.expediteur.getId() + ";";
+        messageString += this.date + ";";
+        for (Utilisateur utilisateur : this.likes) {messageString += utilisateur.getId() + ",";}
+        if (messageString.endsWith(",")) {messageString = messageString.substring(0, messageString.length() - 1);}
+        if (this.likes.size() == 0) {messageString += "-1";}
+        messageString += ";";
+        messageString += this.supprime + ";";
+        messageString += this.type;
+        return messageString;
+!!!133378.java!!!	toString() : String
+        return "{\"id\":" + this.id +
+                ",\"contenu\":\"" + this.contenu + '"' +
+                ",\"expediteur\":\"" + this.expediteur + '"' +
+                ",\"date\":\"" + this.date + '"' +
+                ",\"likes\":" + this.likes.size() +
+                ",\"type\":" + this.type +
+                '}';

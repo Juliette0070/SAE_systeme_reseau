@@ -1,0 +1,92 @@
+class Utilisateur
+!!!137474.java!!!	Utilisateur(in id : int, in pseudo : String, in motDePasse : String)
+        this.id = id;
+        this.pseudo = pseudo;
+        this.motDePasse = motDePasse;
+        this.abonnes = new HashSet<>();
+        this.abonnements = new HashSet<>();
+        this.connecte = false;
+        this.messages = new HashMap<>();
+        this.client = null;
+!!!137602.java!!!	getId() : int
+        return this.id;
+!!!137730.java!!!	setId(in id : int) : void
+        this.id = id;
+!!!137858.java!!!	getClient() : ClientHandler
+        return this.client;
+!!!137986.java!!!	setClient(inout client : ClientHandler) : void
+        this.client = client;
+!!!138114.java!!!	getPseudo() : String
+        return this.pseudo;
+!!!138242.java!!!	setPseudo(in pseudo : String) : void
+        this.pseudo = pseudo;
+!!!138370.java!!!	getMotDePasse() : String
+        return this.motDePasse;
+!!!138498.java!!!	setMotDePasse(in motDePasse : String) : void
+        this.motDePasse = motDePasse;
+!!!138626.java!!!	getAbonnes() : Utilisateur
+        return this.abonnes;
+!!!138754.java!!!	addAbonne(inout utilisateur : Utilisateur) : void
+        if (utilisateur.getPseudo() != this.pseudo) this.abonnes.add(utilisateur);
+!!!138882.java!!!	removeAbonne(inout utilisateur : Utilisateur) : void
+        this.abonnes.remove(utilisateur);
+!!!139010.java!!!	getAbonnements() : Utilisateur
+        return this.abonnements;
+!!!139138.java!!!	addAbonnement(inout utilisateur : Utilisateur) : void
+        if (utilisateur.getPseudo() != this.pseudo) this.abonnements.add(utilisateur);
+!!!139266.java!!!	removeAbonnement(inout utilisateur : Utilisateur) : void
+        this.abonnements.remove(utilisateur);
+!!!139394.java!!!	isConnecte() : boolean
+        return this.connecte;
+!!!139522.java!!!	setConnecte(inout connecte : boolean) : void
+        this.connecte = connecte;
+!!!139650.java!!!	getMessages() : Message
+        return this.messages;
+!!!139778.java!!!	addMessage(inout message : Message) : void
+        boolean lu = false;
+        if (this.connecte) {lu = true;}
+        this.messages.put(message, lu);
+        if (this.client != null) {this.client.sendMessage(message);}
+!!!139906.java!!!	removeMessage(inout message : Message) : void
+        this.messages.remove(message);
+!!!140034.java!!!	setLu(inout message : Message) : void
+        this.messages.put(message, true);
+!!!140162.java!!!	setNonLu(inout message : Message) : void
+        this.messages.put(message, false);
+!!!140290.java!!!	setAllLu() : void
+        for (Message message : this.messages.keySet()) {
+            this.messages.put(message, true);
+        }
+!!!140418.java!!!	setAllNonLu() : void
+        for (Message message : this.messages.keySet()) {
+            this.messages.put(message, false);
+        }
+!!!140546.java!!!	getNombreMessages() : int
+        return this.messages.keySet().size();
+!!!140674.java!!!	getMessagesNonLus() : Message
+        Set<Message> messagesNonLus = new HashSet<>();
+        for (Message message : this.messages.keySet()) {
+            if (!this.messages.get(message)) {
+                messagesNonLus.add(message);
+            }
+        }
+        return messagesNonLus;
+!!!140802.java!!!	sauvegarde() : String
+        String utilisateurString = "";
+        utilisateurString += this.id + ";";
+        utilisateurString += this.pseudo + ";";
+        utilisateurString += this.motDePasse + ";";
+        for (Utilisateur utilisateur : this.abonnes) {utilisateurString += utilisateur.getId() + ",";}
+        if (utilisateurString.endsWith(",")) {utilisateurString = utilisateurString.substring(0, utilisateurString.length() - 1);}
+        if (this.abonnes.size() == 0) {utilisateurString += "-1";}
+        utilisateurString += ";";
+        for (Utilisateur utilisateur : this.abonnements) {utilisateurString += utilisateur.getId() + ",";}
+        if (utilisateurString.endsWith(",")) {utilisateurString = utilisateurString.substring(0, utilisateurString.length() - 1);}
+        if (this.abonnements.size() == 0) {utilisateurString += "-1";}
+        utilisateurString += ";";
+        for (Message message : this.messages.keySet()) {utilisateurString += message.getId() + ":" + this.messages.get(message) + ",";}
+        if (utilisateurString.endsWith(",")) {utilisateurString = utilisateurString.substring(0, utilisateurString.length() - 1);}
+        if (this.messages.keySet().size() == 0) {utilisateurString += "-1";}
+        return utilisateurString;
+!!!140930.java!!!	toString() : String
+        return this.pseudo;

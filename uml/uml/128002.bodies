@@ -1,0 +1,82 @@
+class Client
+!!!128002.java!!!	Client()
+        this.clientSocket = new Socket("localhost", 4444); // Pour se connecter en local
+        // this.clientSocket = new Socket("0.tcp.eu.ngrok.io", 17204); // Pour se connecter au i
+        this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
+        this.appli = null;
+!!!128130.java!!!	Client(inout appli : Tuito)
+        this.clientSocket = new Socket("localhost", 4444);
+        this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
+        this.appli = appli;
+!!!128258.java!!!	run() : void
+        try {
+            InputHandler inputHandler = new InputHandler(this.clientSocket);
+            Thread inputThread = new Thread(inputHandler);
+            inputThread.start();
+            String message;
+            while ((message = reader.readLine()) != null) {
+                this.afficheMessage(message);
+            }
+        } catch (Exception e) {
+            closeSocket();
+            e.printStackTrace();
+        }
+!!!128386.java!!!	getClientSocket() : Socket
+        return this.clientSocket;
+!!!128514.java!!!	getReader() : BufferedReader
+        return this.reader;
+!!!128642.java!!!	afficheMessage(in message : String) : void
+        if (this.appli == null) {
+            this.afficheMessageTerminal(message);
+        } else {
+            this.afficheMessageInterface(message);
+        }
+!!!128770.java!!!	afficheMessageInterface(in message : String) : void
+        // parsing du json
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
+        int id = jsonObject.get("id").getAsInt();
+        String contenu = jsonObject.get("contenu").getAsString();
+        String expediteur = jsonObject.get("expediteur").getAsString();
+        int likes = jsonObject.get("likes").getAsInt();
+        String type = jsonObject.get("type").getAsString();
+        String dateString = jsonObject.get("date").getAsString();
+        // conversion date String en Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+        Date date = new Date();
+        try {date = dateFormat.parse(dateString);}
+        catch (ParseException e) {e.printStackTrace();}
+        // affichage en fonction du type
+        this.appli.handleMessage(id, date, likes, expediteur, contenu, type);
+!!!128898.java!!!	afficheMessageTerminal(in message : String) : void
+        // System.out.println(message);
+        // parsing du json
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
+        int id = jsonObject.get("id").getAsInt();
+        String contenu = jsonObject.get("contenu").getAsString();
+        String expediteur = jsonObject.get("expediteur").getAsString();
+        int likes = jsonObject.get("likes").getAsInt();
+        int type = jsonObject.get("type").getAsInt();
+        String dateString = jsonObject.get("date").getAsString();
+        // conversion date String en Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+        Date date = new Date();
+        try {date = dateFormat.parse(dateString);}
+        catch (ParseException e) {e.printStackTrace();}
+        // affichage en fonction du type (--A VENIR--)
+        System.out.println("id:" + id + " | " + date + " | " + likes + " likes");
+        System.out.println(expediteur + ">" + contenu);
+!!!129026.java!!!	closeSocket() : void
+        try {
+            this.clientSocket.close();
+            this.reader.close();
+            this.writer.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+!!!129154.java!!!	main(inout args : String [[]]) : void
+        Client client = new Client();
+        client.run();

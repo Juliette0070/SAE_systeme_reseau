@@ -1,7 +1,7 @@
 format 224
 "unknown" // unknown
   revision 1
-  modified_by 2 "juliette"
+  modified_by 2 "savoyarde"
   // class settings
   
   classdiagramsettings member_max_width 0 end
@@ -31,7 +31,7 @@ format 224
    end
   
   java_dir "<unknown>"
-  classview 128386 "unknown"
+  classview 128130 "unknown"
     
     classdiagramsettings member_max_width 0 end
     
@@ -51,7 +51,35 @@ format 224
     
     activitydiagramsettings
      end
-    class 128258 "Runnable"
+    class 128130 "Thread"
+      visibility package 
+      cpp_decl ""
+      java_decl "${comment}${@}${visibility}${static}${final}${abstract}class ${name}${extends}${implements} {
+${members}}
+"
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+    end
+
+    class 128514 "Runnable"
+      visibility package 
+      cpp_decl ""
+      java_decl "${comment}${@}${visibility}${static}${final}${abstract}class ${name}${extends}${implements} {
+${members}}
+"
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+    end
+
+    class 129154 "Application"
       visibility package 
       cpp_decl ""
       java_decl "${comment}${@}${visibility}${static}${final}${abstract}class ${name}${extends}${implements} {

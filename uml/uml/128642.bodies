@@ -1,0 +1,217 @@
+class Server
+!!!133506.java!!!	Server()
+        this.serverSocket = new ServerSocket(4444);
+        this.messages = new ArrayList<>();
+        this.utilisateurs = new HashSet<>();
+        this.utilisateurs.add(new Utilisateur(0, "Serveur", "admin"));
+        this.charger();
+!!!133634.java!!!	run() : void
+        System.out.println("Server running on " + this.serverSocket.getInetAddress() + ":" + this.serverSocket.getLocalPort());
+        try {
+            while(true) {
+                ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),this);
+                Thread clientThread = new Thread(clientHandler);
+                clientThread.start();
+            }
+        } catch(Exception e) {
+            closeServer();
+            e.printStackTrace();
+        }
+!!!133762.java!!!	getUtilisateurServer() : Utilisateur
+        return this.getUtilisateur("Serveur");
+!!!133890.java!!!	getUtilisateur(in pseudo : String) : Utilisateur
+        for (Utilisateur utilisateur : this.utilisateurs) {
+            if (utilisateur.getPseudo().equals(pseudo)) {
+                return utilisateur;
+            }
+        } return null;
+!!!134018.java!!!	getUtilisateur(in id : int) : Utilisateur
+        for (Utilisateur utilisateur : this.utilisateurs) {
+            if (utilisateur.getId() == id) {
+                return utilisateur;
+            }
+        } return null;
+!!!134146.java!!!	addUtilisateur(inout utilisateur : Utilisateur) : void
+        this.utilisateurs.add(utilisateur);
+!!!134274.java!!!	broadcast(inout message : Message) : void
+        for (Utilisateur utilisateur : this.utilisateurs) {
+            if (!utilisateur.getPseudo().equals(message.getExpediteur().getPseudo())) {
+                utilisateur.addMessage(message);
+            }
+        } this.messages.add(message);
+!!!134402.java!!!	sendTo(in nomClient : String, inout message : Message) : void
+        for (Utilisateur utilisateur : this.utilisateurs) {
+            if (utilisateur.getPseudo().equals(nomClient)) {
+                utilisateur.addMessage(message);
+            }
+        } this.messages.add(message);
+!!!134530.java!!!	sendToAbonnes(inout message : Message) : void
+        for (Utilisateur utilisateur : message.getExpediteur().getAbonnes()) {
+            utilisateur.addMessage(message);
+        } this.messages.add(message);
+!!!134658.java!!!	createMessage(in contenu : String, inout expediteur : Utilisateur, in type : String) : Message
+        int id = this.messages.size();
+        Message message = new Message(id, contenu, expediteur, type);
+        return message;
+!!!134786.java!!!	addMessage(inout message : Message) : void
+        this.messages.add(message);
+!!!134914.java!!!	getMessages() : Message
+        return this.messages;
+!!!135042.java!!!	getUtilisateurs() : Utilisateur
+        return this.utilisateurs;
+!!!135170.java!!!	removeClient(inout clientHandler : ClientHandler) : void
+        this.utilisateurs.remove(clientHandler.getUtilisateur());
+!!!135298.java!!!	getMessage(in id : int) : Message
+        for (Message message : this.messages) {
+            if (message.getId() == id) {
+                return message;
+            }
+        } return null;
+!!!135426.java!!!	removeUtilisateur(inout utilisateur : Utilisateur) : void
+        this.utilisateurs.remove(utilisateur);
+!!!135554.java!!!	getIdUtilisateur() : int
+        int id = this.utilisateurs.size();
+        while (this.getUtilisateur(id) != null) {
+            id++;
+        } return id;
+!!!135682.java!!!	sauvegarder() : void
+        // fichier utilisateurs
+        String chaineUtilisateurs = "";
+        for (Utilisateur utilisateur : this.utilisateurs) {chaineUtilisateurs += utilisateur.sauvegarde() + "\n";}
+        File fichierUtilisateurs = new File("sauvegardes/utilisateurs.txt");
+        if (!fichierUtilisateurs.getParentFile().exists()) {fichierUtilisateurs.getParentFile().mkdirs();}
+        try {
+            FileWriter fileWriterUtilisateurs = new FileWriter(fichierUtilisateurs);
+            BufferedWriter bufferedWriterUtilisateurs = new BufferedWriter(fileWriterUtilisateurs);
+            bufferedWriterUtilisateurs.write(chaineUtilisateurs);
+            bufferedWriterUtilisateurs.close();
+            fileWriterUtilisateurs.close();
+        } catch (Exception e) {System.out.println("erreur lors de la sauvegarde des utilisateurs ou fichier vide/inexistant");}
+        // fichier messages
+        String chaineMessages = "";
+        for (Message message : this.messages) {chaineMessages += message.sauvegarde() + "\n";}
+        File fichierMessages = new File("sauvegardes/messages.txt");
+        if (!fichierMessages.getParentFile().exists()) {fichierMessages.getParentFile().mkdirs();}
+        try {
+            FileWriter fileWriterMessages = new FileWriter(fichierMessages);
+            BufferedWriter bufferedWriterMessages = new BufferedWriter(fileWriterMessages);
+            bufferedWriterMessages.write(chaineMessages);
+            bufferedWriterMessages.close();
+            fileWriterMessages.close();
+        } catch (Exception e) {System.out.println("erreur lors de la sauvegarde des messages ou fichier vide/inexistant");}
+!!!135810.java!!!	charger() : void
+        Set<Utilisateur> setUtilisateurs = new HashSet<>();
+        List<Message> listeMessages = new ArrayList<>();
+        // fichier utilisateurs
+        try {
+            File fichierUtilisateurs = new File("sauvegardes/utilisateurs.txt");
+            java.util.Scanner scannerUtilisateurs = new java.util.Scanner(fichierUtilisateurs);
+            while (scannerUtilisateurs.hasNextLine()) {
+                String ligne = scannerUtilisateurs.nextLine();
+                String[] elements = ligne.split(";");
+                int id = Integer.parseInt(elements[0]);
+                String pseudo = elements[1];
+                String motDePasse = elements[2];
+                Utilisateur utilisateur = new Utilisateur(id, pseudo, motDePasse);
+                setUtilisateurs.add(utilisateur);
+            } scannerUtilisateurs.close();
+        } catch (Exception e) {System.out.println("erreur lors du chargement des utilisateurs ou fichier vide/inexistant");}
+        // ajout des abonnements
+        try {
+            File fichierUtilisateurs = new File("sauvegardes/utilisateurs.txt");
+            java.util.Scanner scannerUtilisateurs = new java.util.Scanner(fichierUtilisateurs);
+            while (scannerUtilisateurs.hasNextLine()) {
+                String ligne = scannerUtilisateurs.nextLine();
+                String[] elements = ligne.split(";");
+                int id = Integer.parseInt(elements[0]);
+                String[] abonnesString = new String[0];
+                if (!elements[3].equals("-1")) {abonnesString = elements[3].split(",");}
+                String[] abonnementsString = new String[0];
+                if (!elements[4].equals("-1")) {abonnementsString = elements[4].split(",");}
+                Utilisateur uti = null;
+                for (Utilisateur utilisateur : setUtilisateurs) { // récupération de l'utilisateur
+                    if (utilisateur.getId() == id) {
+                        uti = utilisateur;
+                        break;
+                    }
+                }
+                for (Utilisateur utilisateur : setUtilisateurs) {
+                    for (String abonneString : abonnesString) { // ajout des abonnés
+                        if (utilisateur.getId() == Integer.parseInt(abonneString)) {
+                            uti.addAbonne(utilisateur);
+                        }
+                    }
+                    for (String abonnementString : abonnementsString) { // ajout des abonnements
+                        if (utilisateur.getId() == Integer.parseInt(abonnementString)) {
+                            uti.addAbonnement(utilisateur);
+                        }
+                    }
+                }
+            } scannerUtilisateurs.close();
+        } catch (Exception e) {System.out.println("erreur lors du chargement des abonnements ou fichier vide/inexistant");}
+        // fichier messages
+        try {
+            File fichierMessages = new File("sauvegardes/messages.txt");
+            java.util.Scanner scannerMessages = new java.util.Scanner(fichierMessages);
+            while (scannerMessages.hasNextLine()) {
+                String ligne = scannerMessages.nextLine();
+                String[] elements = ligne.split(";");
+                int id = Integer.parseInt(elements[0]);
+                String contenu = elements[1];
+                int expediteurInt = Integer.parseInt(elements[2]);
+                Utilisateur expediteur = null;
+                for (Utilisateur utilisateur : setUtilisateurs) {
+                    if (utilisateur.getId() == expediteurInt) {expediteur = utilisateur;}
+                }
+                String dateString = elements[3];
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+                Date date = new Date();
+                try {date = dateFormat.parse(dateString);}
+                catch (ParseException e) {e.printStackTrace();}
+                String type = elements[6];
+                Message message = new Message(id, contenu, expediteur, type);
+                message.setDate(date);
+                String likes = elements[4];
+                String[] likesString = new String[0];
+                if (!likes.equals("-1")) {likesString = likes.split(",");}
+                for (String like : likesString) {
+                    for (Utilisateur utilisateur : setUtilisateurs) {
+                        if (utilisateur.getId() == Integer.parseInt(like)) {
+                            message.addLike(utilisateur);
+                        }
+                    }
+                } if (elements[5].equals("true")) {message.supprime(true);}
+                listeMessages.add(message);
+            } scannerMessages.close();
+        } catch (Exception e) {System.out.println("erreur lors du chargement des messages ou fichier vide/inexistant");}
+        // ajout des messages aux utilisateurs
+        try {
+            for (Message message : listeMessages) {
+                for (Utilisateur utilisateur : setUtilisateurs) {
+                    if (utilisateur.getPseudo().equals(message.getExpediteur().getPseudo())) {
+                        utilisateur.addMessage(message);
+                        utilisateur.setLu(message);
+                    }
+                }
+            }
+        } catch (Exception e) {System.out.println("erreur lors du chargement des messages des utilisateurs ou fichier vide/inexistant");}
+        // ajout des utilisateurs au serveur
+        this.utilisateurs = setUtilisateurs;
+        // ajout des messages au serveur
+        this.messages = listeMessages;
+        // ajouter le Serveur s'il n'existe pas
+        if (this.utilisateurs.size() == 0) {
+            this.utilisateurs.add(new Utilisateur(0, "Serveur", "admin"));
+        }
+!!!135938.java!!!	closeServer() : void
+        System.out.println("Saving server...");
+        this.sauvegarder();
+        System.out.println("Closing server...");
+        try {
+            this.serverSocket.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+!!!136066.java!!!	main(inout args : String [[]]) : void
+        Server server = new Server();
+        server.run();

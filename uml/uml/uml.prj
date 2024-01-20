@@ -1,7 +1,7 @@
 format 224
-"new_uml"
+"uml"
   revision 1
-  modified_by 2 "juliette"
+  modified_by 2 "savoyarde"
 
 
   
@@ -44,33 +44,7 @@ format 224
 
   mark_for_import
   
-  classview 128130 "vue"
-    
-    classdiagramsettings member_max_width 0 end
-    
-    classcompositediagramsettings end
-    
-    collaborationdiagramsettings end
-    
-    objectdiagramsettings end
-    
-    objectcompositediagramsettings end
-    
-    sequencediagramsettings end
-    
-    statediagramsettings
-     end
-    
-    
-    activitydiagramsettings
-     end
-    classdiagram 128130 "diagramme"
-      classdiagramsettings member_max_width 0 end
-      size A4
-    end
-  end
+  package_ref 128002 // SAE_systeme_reseau
 
-  package_ref 128130 // SAE_systeme_reseau
-
-  package_ref 128258 // unknown
+  package_ref 128130 // unknown
 end

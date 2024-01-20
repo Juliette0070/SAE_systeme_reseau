@@ -1,0 +1,10 @@
+window_sizes 1366 695 320 1040 538 104
+cleanlooks_style
+show_stereotypes
+selected 
+  package_ref 128002 // SAE_systeme_reseau
+open
+  
+  package_ref 128002 // SAE_systeme_reseau
+end
+end
