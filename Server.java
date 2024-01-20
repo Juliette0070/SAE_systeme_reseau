@@ -143,7 +143,7 @@ public class Server implements Runnable {
             bufferedWriterUtilisateurs.write(chaineUtilisateurs);
             bufferedWriterUtilisateurs.close();
             fileWriterUtilisateurs.close();
-        } catch (Exception e) {System.out.println("erreur lors de la sauvegarde des utilisateurs");}
+        } catch (Exception e) {System.out.println("erreur lors de la sauvegarde des utilisateurs ou fichier vide/inexistant");}
         // fichier messages
         String chaineMessages = "";
         for (Message message : this.messages) {chaineMessages += message.sauvegarde() + "\n";}
@@ -155,7 +155,7 @@ public class Server implements Runnable {
             bufferedWriterMessages.write(chaineMessages);
             bufferedWriterMessages.close();
             fileWriterMessages.close();
-        } catch (Exception e) {System.out.println("erreur lors de la sauvegarde des messages");}
+        } catch (Exception e) {System.out.println("erreur lors de la sauvegarde des messages ou fichier vide/inexistant");}
     }
 
     public void charger() {
@@ -174,7 +174,7 @@ public class Server implements Runnable {
                 Utilisateur utilisateur = new Utilisateur(id, pseudo, motDePasse);
                 setUtilisateurs.add(utilisateur);
             } scannerUtilisateurs.close();
-        } catch (Exception e) {System.out.println("erreur lors du chargement des utilisateurs");}
+        } catch (Exception e) {System.out.println("erreur lors du chargement des utilisateurs ou fichier vide/inexistant");}
         // ajout des abonnements
         try {
             File fichierUtilisateurs = new File("sauvegardes/utilisateurs.txt");
@@ -207,7 +207,7 @@ public class Server implements Runnable {
                     }
                 }
             } scannerUtilisateurs.close();
-        } catch (Exception e) {System.out.println("erreur lors du chargement des abonnements");}
+        } catch (Exception e) {System.out.println("erreur lors du chargement des abonnements ou fichier vide/inexistant");}
         // fichier messages
         try {
             File fichierMessages = new File("sauvegardes/messages.txt");
@@ -242,16 +242,18 @@ public class Server implements Runnable {
                 } if (elements[5].equals("true")) {message.supprime(true);}
                 listeMessages.add(message);
             } scannerMessages.close();
-        } catch (Exception e) {System.out.println("erreur lors du chargement des messages");}
+        } catch (Exception e) {System.out.println("erreur lors du chargement des messages ou fichier vide/inexistant");}
         // ajout des messages aux utilisateurs
-        for (Message message : listeMessages) {
-            for (Utilisateur utilisateur : setUtilisateurs) {
-                if (utilisateur.getPseudo().equals(message.getExpediteur().getPseudo())) {
-                    utilisateur.addMessage(message);
-                    utilisateur.setLu(message);
+        try {
+            for (Message message : listeMessages) {
+                for (Utilisateur utilisateur : setUtilisateurs) {
+                    if (utilisateur.getPseudo().equals(message.getExpediteur().getPseudo())) {
+                        utilisateur.addMessage(message);
+                        utilisateur.setLu(message);
+                    }
                 }
             }
-        }
+        } catch (Exception e) {System.out.println("erreur lors du chargement des messages des utilisateurs ou fichier vide/inexistant");}
         // ajout des utilisateurs au serveur
         this.utilisateurs = setUtilisateurs;
         // ajout des messages au serveur
