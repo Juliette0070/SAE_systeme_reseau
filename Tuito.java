@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -231,19 +232,40 @@ public class Tuito extends Application {
             }
         });
 
-        VBox aside = new VBox(10);
+        BorderPane aside = new BorderPane();
+        VBox topButtons = new VBox(10);
         Button boutonAbonnes = new Button("Abonnes");
+        boutonAbonnes.setOnAction(e -> {
+            champMessage.setText("/abonnes");
+            envoyerMessage(champMessage.getText());
+            champMessage.clear();
+        });
         Button boutonAbonnements = new Button("Abonnements");
+        boutonAbonnements.setOnAction(e -> {
+            champMessage.setText("/suivi");
+            envoyerMessage(champMessage.getText());
+            champMessage.clear();
+        });
         Button boutonUtilisateurs = new Button("Utilisateurs");
         boutonUtilisateurs.setOnAction(e -> {
             champMessage.setText("/list");
             envoyerMessage(champMessage.getText());
             champMessage.clear();
         });
+        Button quitter = new Button("Quitter");
+        quitter.setOnAction(e -> {
+            champMessage.setText("/quit");
+            envoyerMessage(champMessage.getText());
+            champMessage.clear();
+            this.primaryStage.close();
+        });
         boutonAbonnes.setMaxWidth(Double.MAX_VALUE);
         boutonAbonnements.setMaxWidth(Double.MAX_VALUE);
         boutonUtilisateurs.setMaxWidth(Double.MAX_VALUE);
-        aside.getChildren().addAll(boutonAbonnes, boutonAbonnements, boutonUtilisateurs);
+        quitter.setMaxWidth(Double.MAX_VALUE);
+        topButtons.getChildren().addAll(boutonAbonnes, boutonAbonnements, boutonUtilisateurs);
+        aside.setTop(topButtons);
+        aside.setBottom(quitter);
 
         BorderPane root = new BorderPane();
         VBox content = new VBox(10);

@@ -95,7 +95,7 @@ public class ClientHandler implements Runnable {
             String[] args = commande.split(" ");
             String personne = args[1];
             Utilisateur user = this.server.getUtilisateur(personne);
-            if (user != null) {
+            if (user != null || !(user.equals(this.utilisateur))) {
                 user.addAbonne(this.utilisateur);
                 this.utilisateur.addAbonnement(user);
                 this.sendMessageFromServer("Vous suivez desormais " + personne + ".", "315");
@@ -120,8 +120,10 @@ public class ClientHandler implements Runnable {
                 String followers = "";
                 for (Utilisateur user : this.utilisateur.getAbonnes()) {
                     followers += user.getPseudo() + ",";
-                } if (followers.endsWith(",")) {followers = followers.substring(0, followers.length() - 2);}
+                } if (followers.endsWith(", ")) {followers = followers.substring(0, followers.length() - 2);}
                 this.sendMessageFromServer(followers, "321");
+            } else {
+                this.sendMessageFromServer("Vous n'avez pas d'abonnes.", "321");
             }
         } else if (commande.startsWith("/suivi")) {
             Integer nbSuivis = this.utilisateur.getAbonnements().size();
@@ -130,8 +132,10 @@ public class ClientHandler implements Runnable {
                 String abonnements = "";
                 for (Utilisateur user : this.utilisateur.getAbonnements()) {
                     abonnements += user.getPseudo() + ",";
-                } if (abonnements.endsWith(",")) {abonnements = abonnements.substring(0, abonnements.length() - 2);}
+                } if (abonnements.endsWith(", ")) {abonnements = abonnements.substring(0, abonnements.length() - 2);}
                 this.sendMessageFromServer(abonnements, "322");
+            } else {
+                this.sendMessageFromServer("Vous n'avez pas d'abonnements.", "322");
             }
         } else if (commande.startsWith("/quit")) {
             this.utilisateur.setConnecte(false);
