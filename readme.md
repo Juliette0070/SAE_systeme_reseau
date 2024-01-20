@@ -1,31 +1,24 @@
-# SAE réseau/système
+# SAE réseau/système 2024
 
-## Juliette ROUSSELET
-
-## Jordan LAVENANT
+## Juliette ROUSSELET - Jordan LAVENANT
 
 ## Création d'une appli de messagerie
 
-### commande pour compiler (linux puis windows)
+### Commandes
 
-javac -d bin -cp .:lib/gson-2.10.1.jar --module-path /usr/share/openjfx/lib --add-modules javafx.controls *.java
-javac -d bin -cp ".;lib/gson-2.10.1.jar" --module-path c:\\Users\\Utilisateur\\Desktop\\TéléchargementBis\\openjfx\\javafx-sdk-20.0.1\\lib\\ --add-modules javafx.controls *.java
+#### linux
 
-### commande pour executer
+    sh _server_linux.sh
+    sh _client_linux.sh
 
-linux :
+#### windows
 
-java -cp .:bin:lib/gson-2.10.1.jar --module-path /usr/share/openjfx/lib --add-modules javafx.controls Tuito
-java -cp .:bin:lib/gson-2.10.1.jar Server
-java -cp .:bin:lib/gson-2.10.1.jar Client
 
-windows :
+    java -cp ".;bin;lib/gson-2.10.1.jar" --module-path c:\\Users\\Utilisateur\\Desktop\\TéléchargementBis\\openjfx\\javafx-sdk-20.0.1\\lib\\ --add-modules javafx.controls Tuito
 
-java -cp ".;bin;lib/gson-2.10.1.jar" --module-path c:\\Users\\Utilisateur\\Desktop\\TéléchargementBis\\openjfx\\javafx-sdk-20.0.1\\lib\\ --add-modules javafx.controls Tuito
-java -cp ".;bin;lib/gson-2.10.1.jar" Server
-java -cp ".;bin;lib/gson-2.10.1.jar" Client
+    java -cp ".;bin;lib/gson-2.10.1.jar" Server
 
-#### infos
+### Informations
 
 types de message (modifications possibles):
 
