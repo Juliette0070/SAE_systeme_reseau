@@ -119,8 +119,10 @@ public class ClientHandler implements Runnable {
                 String followers = "";
                 for (Utilisateur user : this.utilisateur.getAbonnes()) {
                     followers += user.getPseudo() + ",";
-                } if (followers.endsWith(",")) {followers = followers.substring(0, followers.length() - 2);}
+                } if (followers.endsWith(", ")) {followers = followers.substring(0, followers.length() - 2);}
                 this.sendMessageFromServer(followers, "321");
+            } else {
+                this.sendMessageFromServer("", "321");
             }
         } else if (commande.startsWith("/suivi")) {
             Integer nbSuivis = this.utilisateur.getAbonnements().size();
@@ -128,8 +130,10 @@ public class ClientHandler implements Runnable {
                 String abonnements = "";
                 for (Utilisateur user : this.utilisateur.getAbonnements()) {
                     abonnements += user.getPseudo() + ",";
-                } if (abonnements.endsWith(",")) {abonnements = abonnements.substring(0, abonnements.length() - 2);}
+                } if (abonnements.endsWith(", ")) {abonnements = abonnements.substring(0, abonnements.length() - 2);}
                 this.sendMessageFromServer(abonnements, "322");
+            } else {
+                this.sendMessageFromServer("", "322");
             }
         } else if (commande.startsWith("/quit")) {
             this.utilisateur.setConnecte(false);
@@ -231,7 +235,7 @@ public class ClientHandler implements Runnable {
                         }
                     } if (client.getAbonnes().contains(this.utilisateur)) {suivi = true;}
                     if (vousSuit && suivi) {personne += " (amis)";}
-                    else if (vousSuit) {personne += " (vous suit)";}
+                    else if (vousSuit) {personne += " (abonné)";}
                     else if (suivi) {personne += " (suivi)";} 
                 } liste += personne + ", ";
             }

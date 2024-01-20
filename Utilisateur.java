@@ -10,8 +10,8 @@ public class Utilisateur {
     private int id;
     private String pseudo;
     private String motDePasse;
-    private List<Utilisateur> abonnes;
-    private List<Utilisateur> abonnements;
+    private Set<Utilisateur> abonnes;
+    private Set<Utilisateur> abonnements;
     private boolean connecte;
     private ClientHandler client;
     private Map<Message, Boolean> messages;
@@ -20,8 +20,8 @@ public class Utilisateur {
         this.id = id;
         this.pseudo = pseudo;
         this.motDePasse = motDePasse;
-        this.abonnes = new ArrayList<>();
-        this.abonnements = new ArrayList<>();
+        this.abonnes = new HashSet<>();
+        this.abonnements = new HashSet<>();
         this.connecte = false;
         this.messages = new HashMap<>();
         this.client = null;
@@ -59,24 +59,24 @@ public class Utilisateur {
         this.motDePasse = motDePasse;
     }
 
-    public List<Utilisateur> getAbonnes() {
+    public Set<Utilisateur> getAbonnes() {
         return this.abonnes;
     }
     
     public void addAbonne(Utilisateur utilisateur) {
-        this.abonnes.add(utilisateur);
+        if (utilisateur.getPseudo() != this.pseudo) this.abonnes.add(utilisateur);
     }
 
     public void removeAbonne(Utilisateur utilisateur) {
         this.abonnes.remove(utilisateur);
     }
 
-    public List<Utilisateur> getAbonnements() {
+    public Set<Utilisateur> getAbonnements() {
         return this.abonnements;
     }
 
     public void addAbonnement(Utilisateur utilisateur) {
-        this.abonnements.add(utilisateur);
+        if (utilisateur.getPseudo() != this.pseudo) this.abonnements.add(utilisateur);
     }
 
     public void removeAbonnement(Utilisateur utilisateur) {
