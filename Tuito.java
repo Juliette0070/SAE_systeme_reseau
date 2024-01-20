@@ -207,8 +207,8 @@ public class Tuito extends Application {
 
         this.zoneChat.setEditable(false);
         this.zoneChat.setWrapText(true);
-        this.zoneChat.setPrefHeight(500);
-        this.zoneChat.setPrefWidth(700);
+        this.zoneChat.setPrefHeight(800);
+        this.zoneChat.setPrefWidth(300);
 
         TextField champMessage = new TextField();
         champMessage.setPromptText("Ecrire un message...");
@@ -232,7 +232,7 @@ public class Tuito extends Application {
         VBox root = new VBox(10);
         root.getChildren().addAll(zoneChat, champMessage, boutonEnvoyer);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 300, 600);
         this.primaryStage.setScene(scene);
         this.primaryStage.show();
     }
