@@ -317,7 +317,6 @@ public class Tuito extends Application {
             }
 
             final String pseudoFinal = pseudo;
-            System.out.println("pseudo " + pseudoFinal);
             HBox userContainer = new HBox(30);
 
             Label username = new Label(user);
